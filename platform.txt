@@ -1,0 +1,126 @@
+# ------------------------------
+# RL78/G23 and platform.
+# ------------------------------
+# For more info:
+# LLVM Prototype Package for Tools Test
+name=Renesas RL78/G23
+version=1.0.0
+
+# --------------------- 
+# AVR compile variables
+# --------------------- 
+compiler.optimize =-O0
+
+#------------------------------------#
+# LLVM Compiler Common Variable
+#------------------------------------#
+compiler.path={runtime.tools.llvm-rl78.path}/bin/
+
+#------------------------------------#
+# LLVM Compiler variable
+#------------------------------------#
+compiler.c.cmd=clang
+compiler.c.flags=--target=rl78 {compiler.optimize} -ffunction-sections -fdata-sections -fdiagnostics-parseable-fixits -g -mcpu=s3 -v -std=gnu99 -DARDUINO=1813 -D__RL78__ -DG23_FPB
+
+#------------------------------------#
+# LLVM C++ Compiler variable
+#------------------------------------#
+compiler.cpp.cmd=clang++
+compiler.cpp.flags=--target=rl78 {compiler.optimize} -g -ffunction-sections -fdata-sections -fdiagnostics-parseable-fixits -DCPPAPP -DARDUINO=1813 -D__RL78__ -DG23_FPB
+
+#------------------------------------#
+# LLVM Asemble variable
+#------------------------------------#
+compiler.S.cmd=clang
+compiler.S.flags=--target=rl78 {compiler.optimize} -ffunction-sections -fdata-sections -fdiagnostics-parseable-fixits -g -mcpu=s3 -DCPPAPP 
+
+#------------------------------------#
+# LLVM Linker variable
+#------------------------------------#
+compiler.c.elf.cmd=clang++
+compiler.c.elf.flags=--target=rl78 -ffunction-sections -fdata-sections -fdiagnostics-parseable-fixits -g -mcpu=s3 
+
+#------------------------------------#
+# LLVM Object Copy variable
+#------------------------------------#
+compiler.elf2hex.cmd=llvm-objcopy
+compiler.elf2hex.flags=
+
+#------------------------------------#
+# LLVM print Size variable
+#------------------------------------#
+compiler.size.cmd=llvm-size
+compiler.size.flags=--format=berkeley -x --totals --common --version
+#------------------------------------#
+# LLVM include paths
+#------------------------------------#
+compiler.includes="-I{runtime.platform.path}/cores/rl78g23/avr" "-I{runtime.platform.path}/cores/rl78g23" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ADC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART1" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART2" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_0_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_01_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_23_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_45_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_67_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA1" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_WDT" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL000" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL001" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL012" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_INTC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_CSI11" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA01" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA11" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_CSI111" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_RTC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_01_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_23_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_45_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_67_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_bsp" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_config" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/general" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_bsp" 
+
+
+# this can be overriden in boards.txt
+build.extra_flags=
+
+# --------------------
+# LLVM compile patterns
+# --------------------
+
+# --------------------
+# Compile c files
+# --------------------
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}"  {compiler.c.flags} {build.extra_flags} {includes} {compiler.includes} -c "{source_file}" -o "{object_file}"
+
+# --------------------
+# Compile c++ files
+# --------------------
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}"  {compiler.cpp.flags} {build.extra_flags} {includes} {compiler.includes}  -o "{object_file}" -MMD  -MP -MF "{object_file}" -c  "{source_file}"
+
+# --------------------
+# Compile S files
+# --------------------
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {includes} {compiler.includes} {compiler.S.flags} -c -x assembler-with-cpp "{source_file}" -o "{object_file}"
+
+# --------------------
+# Create archives
+# --------------------
+compiler.ar.cmd=llvm-ar.exe
+compiler.ar.flags=rcs
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} "{archive_file_path}" "{object_file}"
+
+# --------------------
+# Combine gc-sections, archives, and objects
+# --------------------
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {object_files} "{build.path}/core/smc_gen/general/r_cg_vect_table.c.o" "-L{build.path}" "{build.path}/{archive_file}" "-T{runtime.platform.path}/{build.ldscript}"  -Wl,-Map={build.path}/{build.project_name}.map -Wl,--start-group -Wl,--end-group -nostartfiles -Wl,-e_PowerON_Reset -Wl,--gc-sections -Wl,--icf=none -o {build.path}/{build.project_name}.elf
+
+# --------------------
+# Create eeprom
+# --------------------
+recipe.objcopy.eep.pattern=
+
+# --------------------
+# Create hex
+# --------------------
+recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf2hex.flags} "{build.path}/{build.project_name}.elf" -O srec "{build.path}/{build.project_name}.mot"
+
+# --------------------
+# Compute size
+# --------------------
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" {compiler.size.flags} "{build.path}/{build.project_name}.elf"
+
+recipe.size.regex=^(?:\.text|\.data|\.bootloader)\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
+recipe.size.regex.eeprom=^(?:\.eeprom)\s+([0-9]+).*
+
+
+# --------------------
+# SAM3 Uploader tools
+# -------------------
+
+tools.rl78flash.cmd=rl78flash_g2x
+tools.rl78flash.cmd.windows=rl78flash_g2x.exe
+tools.rl78flash.path={runtime.tools.rl78.path}
+
+tools.rl78flash.upload.params.verbose=
+tools.rl78flash.upload.params.quiet=
+tools.rl78flash.upload.pattern="{path}/{cmd}" -b 0 {serial.port.file} "{build.path}/{build.project_name}.mot"
+
+#<EOF>

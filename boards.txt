@@ -1,0 +1,30 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+menu.cpu=Processor
+
+g23-fpb-64p.name=RL78-G23 Fast Prototyping Board 64Pin
+g23-fpb-64p.upload.tool=rl78flash
+g23-fpb-64p.upload.protocol=rl78
+g23-fpb-64p.upload.maximum_size=262144
+g23-fpb-64p.upload.maximum_data_size=20480
+g23-fpb-64p.upload.speed=115200
+
+g23-fpb-64p.bootloader.tool=
+g23-fpb-64p.bootloader.low_fuses=
+g23-fpb-64p.bootloader.high_fuses=
+g23-fpb-64p.bootloader.extended_fuses=
+g23-fpb-64p.bootloader.unlock_bits=
+g23-fpb-64p.bootloader.lock_bits=
+g23-fpb-64p.bootloader.file=
+
+g23-fpb-64p.build.mcu=rl78
+g23-fpb-64p.build.f_cpu=32000000L
+g23-fpb-64p.build.board=RL78-G23 Fast Prototyping Board 64Pin
+g23-fpb-64p.build.core=rl78g23
+########## TSSR changed ##########
+g23-fpb-64p.build.ldscript=variants/linker_scripts/rl78_R7F100GLG.ld
+########## TSSR changed ##########
+g23-fpb-64p.build.variant=
+g23-fpb-64p.build.extra_flags=-DGRPROT
+
+##############################################################
