@@ -36,8 +36,6 @@ Includes
 #include "Config_IICA0.h"
 #include "Config_IICA1.h"
 #include "Config_WDT.h"
-#include "Config_IICA01.h"
-#include "Config_IICA11.h"
 #include "Config_RTC.h"
 #include "Config_ITL000.h"
 #include "Config_ITL001.h"

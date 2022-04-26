@@ -74,7 +74,8 @@ extern "C"{
 #define MAX_CYCLIC_HANDLER 		(8)
 
 /* 1112 Ueeda add */
-#define EXTERNAL_NUM_INTERRUPTS (6)
+//#define EXTERNAL_NUM_INTERRUPTS (6)
+#define EXTERNAL_NUM_INTERRUPTS (7)
 /* 1112 Ueeda add */
 
 /* PWM defines. */
@@ -89,6 +90,7 @@ extern "C"{
 #define EXTERNAL_INTERRUPT_3    11
 #define EXTERNAL_INTERRUPT_4    12
 #define EXTERNAL_INTERRUPT_5    13
+#define EXTERNAL_INTERRUPT_6    26
 
 fInterruptFunc_t g_afInterruptFuncTable[EXTERNAL_NUM_INTERRUPTS] __attribute__((weak));
 /* 1112 Ueeda add */

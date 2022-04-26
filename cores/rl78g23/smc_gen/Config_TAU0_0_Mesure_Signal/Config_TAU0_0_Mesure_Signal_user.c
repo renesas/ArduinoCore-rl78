@@ -69,6 +69,7 @@ void R_Config_TAU0_0_Mesure_Signal_Create_UserInit(void)
 void r_Config_TAU0_0_Mesure_Signal_interrupt(void)
 {
     /* Start user code for r_Config_TAU0_0_interrupt. Do not edit comment generated here */
+
 	if(g_pulse_enable_interrupt_flag == 1UL)
 	{
 		g_tau0_ch0_interrupt_flag = 1UL;

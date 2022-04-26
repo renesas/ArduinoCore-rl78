@@ -231,14 +231,24 @@ void delay(unsigned long ms)
 	}
 #else /*__RL78__*/
 
-	g_u32delay_timer = 0U;
-	g_delay_cnt_flg  = 1U;
-	while (g_u32delay_timer<ms)
-	{
-		HALT();
-	}
-	g_delay_cnt_flg=0U;
-
+    g_delay_cnt_flg = 1U;
+    g_u32delay_timer = 0U;
+    if (g_u8PowerManagementMode == PM_NORMAL_MODE)
+    {
+//        g_u32delay_timer = 0U; // todo:初期化の位置を変更
+//        g_delay_cnt_flg = 1U; // todo:flagの設定位置を変更
+        while (g_u32delay_timer < ms)
+        {
+//            HALT();
+            // todo: 通常モード動作のためHALT移行を停止
+        }
+//        g_delay_cnt_flg = 0U; // todo:flagの解除位置を変更
+    }
+    else
+    {
+        enterPowerManagementMode (ms);
+    }
+    g_delay_cnt_flg = 0U;
 
 #endif/*__RL78__*/
 }
@@ -307,22 +317,61 @@ void delayMicroseconds(unsigned long us)
 
 	// busy wait
 	__asm__ __volatile__ (
-		"1: sbiw %0,1" "\n\t" // 2 cycles
-		"brne 1b" : "=w" (us) : "0" (us) // 2 cycles
+		"1: sbiw %0,1" "\n\t" 				// 2 cycles
+		"brne 1b" : "=w" (us) : "0" (us) 	// 2 cycles
 	);
 #else /*__RL78__*/
 
 	g_u32delay_micros_timer = 0U;
 	g_delay_cnt_micros_flg  = 1U;
-	R_Config_ITL001_SetCompareMatch();
-	R_Config_ITL001_Start();
-	while (g_u32delay_micros_timer<us)
+
+	if(us>999)
 	{
-		NOP();
+		uint32_t ms = us/1000;
+		delay(ms);
+		us = us - ms * 1000;
 	}
 
+	R_Config_ITL000_Stop();								// Stop 1msec Timer
+	R_Config_ITL000_SetCompareMatch_For_MainClock();	// Configuration 1msec Timer as Main Clock
+	R_Config_ITL000_Start();							// Start 1msec Timer
+
+	uint8_t timer_count ;
+	uint8_t timer_div;
+	if (us<=128)
+	{
+		timer_count = us/2 -1 ;
+		timer_div   = 0x40 ;
+	}
+	else if (us<=256)
+	{
+		timer_count = us/4 -1 ;
+		timer_div   = 0x50 ;
+	}
+	else if (us<=512)
+	{
+		timer_count = us/8 -1 ;
+		timer_div   = 0x60 ;
+	}
+	else
+	{
+		timer_count = us/16 -1 ;
+		timer_div   = 0x70 ;
+	}
+	R_Config_ITL001_SetCompareMatch(timer_count,timer_div);
+	R_Config_ITL001_Start();
+	while (g_u32delay_micros_timer<1)
+	{
+		if (g_u8PowerManagementMode == PM_HALT_MODE | g_u8PowerManagementMode == PM_STOP_MODE)
+		{
+			HALT();
+		}
+	}
 	R_Config_ITL001_Stop();
-	g_delay_cnt_micros_flg=0U;
+	R_Config_ITL000_Stop();	// Stop 1msec Timer
+	R_Config_ITL000_SetCompareMatch();
+	R_Config_ITL000_Start();	// Start 1msec Timer
+
 #endif/*__RL78__*/
 }
 

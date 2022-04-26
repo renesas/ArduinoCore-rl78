@@ -41,7 +41,7 @@ void INT_LVI(void) __attribute__ ((interrupt));
  * INT_P0 (0x8)
  */
 void INT_P0(void) __attribute__ ((interrupt));
-
+void r_Config_INTC_intp0_interrupt(void) __attribute__ ((interrupt));
 /* 1112 Ueeda add */
 /*
  * INT_P1 (0xA)

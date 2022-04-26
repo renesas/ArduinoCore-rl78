@@ -62,8 +62,8 @@ const void *Vectors[] VECT_SECT = {
 /*
  * INT_P0 (0x8)
  */
-    INT_P0,
-
+//    INT_P0,
+	r_Config_INTC_intp0_interrupt,
     /* 1112 Ueeda add */
 /*
  * INT_P1 (0xA)

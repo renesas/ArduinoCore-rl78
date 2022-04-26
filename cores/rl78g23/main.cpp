@@ -53,6 +53,7 @@ int main(void)
 	interrupts();				/* Enable Interrupt */
 
 /* Start Interval Timer */
+	R_Config_ITL000_Create();	/* Create 1ms Interval Timer */
 	R_Config_ITL000_Start();	/* Start 1ms Interval Timer */
 	R_ITL_Start_Interrupt();	/* Start ITL Interrupt */
 
@@ -63,7 +64,13 @@ int main(void)
 	R_SAU0_Set_Reset();
 	R_SAU0_Set_PowerOff();
 #endif
-#if (UART2_CHANNEL == 0)
+#if !defined(UART1_CHANNEL) || UART1_CHANNEL == 0
+	R_Config_UART1_Stop();
+#endif
+#if !defined(CSI_CHANNEL)
+	R_Config_CSI11_Stop();
+#endif
+#if !defined(UART2_CHANNEL) || (UART2_CHANNEL == 0)
 	R_SAU1_Set_Reset();
 	R_SAU1_Set_PowerOff();
 #endif

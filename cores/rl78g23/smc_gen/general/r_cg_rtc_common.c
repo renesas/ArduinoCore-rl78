@@ -19,10 +19,10 @@
 
 /***********************************************************************************************************************
 * File Name    : r_cg_rtc_common.c
-* Version      : 1.0.1
+* Version      : 1.0.3
 * Device(s)    : R7F100GLGxFB
 * Description  : None
-* Creation Date: 2021-05-14
+* Creation Date: 
 ***********************************************************************************************************************/
 
 /***********************************************************************************************************************
@@ -35,6 +35,7 @@ Pragma directive
 Includes
 ***********************************************************************************************************************/
 #include "r_cg_macrodriver.h"
+#include "r_cg_rtc_common.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
@@ -43,6 +44,7 @@ Includes
 Global variables and functions
 ***********************************************************************************************************************/
 /* Start user code for global. Do not edit comment generated here */
+
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -68,4 +70,8 @@ void R_RTC_Set_PowerOff(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+bool R_RTC_IsPowerOn(void)
+{
+    return (RTCWEN == 1);
+}
 /* End user code. Do not edit comment generated here */

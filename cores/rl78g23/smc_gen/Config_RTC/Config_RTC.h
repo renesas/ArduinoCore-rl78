@@ -22,7 +22,7 @@
 * Version      : 1.0.0
 * Device(s)    : R7F100GLGxFB
 * Description  : This file implements device driver for Config_RTC.
-* Creation Date: 2021-05-14
+* Creation Date: 
 ***********************************************************************************************************************/
 
 #ifndef CFG_Config_RTC_H
@@ -40,6 +40,16 @@ Macro definitions (Register bit)
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
+#define _00_RTC_COUNTER_SEC                  (0x00U)
+#define _00_RTC_COUNTER_MIN                  (0x00U)
+#define _00_RTC_COUNTER_HOUR                 (0x00U)
+#define _01_RTC_COUNTER_WEEK                 (0x01U)
+#define _01_RTC_COUNTER_DAY                  (0x01U)
+#define _01_RTC_COUNTER_MONTH                (0x01U)
+#define _01_RTC_COUNTER_YEAR                 (0x01U)
+#define _00_RTC_ALARM_MIN                    (0x00U)
+#define _00_RTC_ALARM_HOUR                   (0x00U)
+#define _01_RTC_ALARM_WEEK                   (0x01U)
 #define RTC_WAITTIME_2CYCLE                  (163U)
 
 /***********************************************************************************************************************
@@ -85,9 +95,14 @@ void R_Config_RTC_Stop(void);
 MD_STATUS R_Config_RTC_Set_HourSystem(e_rtc_hour_system_t hour_system);
 MD_STATUS R_Config_RTC_Get_CounterValue(st_rtc_counter_value_t * const counter_read_val);
 MD_STATUS R_Config_RTC_Set_CounterValue(st_rtc_counter_value_t counter_write_val);
+void R_Config_RTC_Set_AlarmOn(void);
+void R_Config_RTC_Set_AlarmOff(void);
+void R_Config_RTC_Set_AlarmValue(st_rtc_alarm_value_t alarm_val);
+void R_Config_RTC_Get_AlarmValue(st_rtc_alarm_value_t * const alarm_val);
 MD_STATUS R_Config_RTC_Set_ConstPeriodInterruptOn(e_rtc_int_period_t period);
 void R_Config_RTC_Set_ConstPeriodInterruptOff(void);
 void R_Config_RTC_Create_UserInit(void);
 /* Start user code for function. Do not edit comment generated here */
+typedef void(*voidFunc_t)(void);
 /* End user code. Do not edit comment generated here */
 #endif

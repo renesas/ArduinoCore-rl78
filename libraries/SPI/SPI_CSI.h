@@ -1,14 +1,11 @@
 #ifndef SPI_CSI_h
 #define SPI_CSI_h
 
-#include "r_cg_macrodriver.h"
-
 #include "Arduino.h"
 
 extern "C" {
-
+#include "r_cg_macrodriver.h"
 #include "r_cg_sau.h"
-
 }
 
 class CSI_Impl {

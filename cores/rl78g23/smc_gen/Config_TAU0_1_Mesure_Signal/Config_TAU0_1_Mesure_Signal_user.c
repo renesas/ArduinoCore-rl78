@@ -37,6 +37,7 @@ Includes
 #include "r_cg_macrodriver.h"
 #include "Config_TAU0_1_Mesure_Signal.h"
 /* Start user code for include. Do not edit comment generated here */
+#define SERVO_CH_NUM	(7)
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -48,6 +49,17 @@ volatile uint32_t g_tau0_ch1_width = 0UL;
 /* Start user code for global. Do not edit comment generated here */
 volatile uint8_t g_tau0_ch1_interrupt_flag = 0UL;
 extern volatile uint8_t g_pulse_enable_interrupt_flag;
+
+volatile uint8_t g_servo_enable_interrupt_flag[SERVO_CH_NUM] = {0,0,0,0,0,0,0};
+
+void R_Config_TAU0_1_Servo_Stop(void);
+void R_Config_TAU0_2_Servo_Stop(void);
+void R_Config_TAU0_3_Servo_Stop(void);
+void R_Config_TAU0_4_Servo_Stop(void);
+void R_Config_TAU0_5_Servo_Stop(void);
+void R_Config_TAU0_6_Servo_Stop(void);
+void R_Config_TAU0_7_Servo_Stop(void);
+
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -86,6 +98,11 @@ void r_Config_TAU0_1_Mesure_Signal_interrupt(void)
 	else
 	{
 		;
+	}
+	if (g_servo_enable_interrupt_flag[0] == 1UL)
+	{
+		R_Config_TAU0_1_Servo_Stop();
+		g_servo_enable_interrupt_flag[0]= 0UL;
 	}
     /* End user code. Do not edit comment generated here */
 }

@@ -19,10 +19,10 @@
 
 /***********************************************************************************************************************
 * File Name    : r_cg_rtc_common.h
-* Version      : 1.0.1
+* Version      : 1.0.3
 * Device(s)    : R7F100GLGxFB
 * Description  : Common header file for RTC peripheral.
-* Creation Date: 2021-05-14
+* Creation Date: 
 ***********************************************************************************************************************/
 
 #ifndef RTC_COMMON_H
@@ -46,5 +46,6 @@ Global functions
 void R_RTC_Set_PowerOn(void);
 void R_RTC_Set_PowerOff(void);
 /* Start user code for function. Do not edit comment generated here */
+bool R_RTC_IsPowerOn(void);
 /* End user code. Do not edit comment generated here */
 #endif

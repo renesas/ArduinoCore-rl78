@@ -58,6 +58,6 @@ void R_Config_ITL001_Set_OperationMode(void);
 void R_Config_ITL001_Callback_Shared_Interrupt(void);
 void R_Config_ITL001_Create_UserInit(void);
 /* Start user code for function. Do not edit comment generated here */
-void R_Config_ITL001_SetCompareMatch(void);
+void R_Config_ITL001_SetCompareMatch(uint8_t count,uint8_t div);
 /* End user code. Do not edit comment generated here */
 #endif

@@ -67,10 +67,10 @@ void R_Config_ITL000_Create(void)
     /* 32-bit interval timer used as 8-bit timer */
     ITLCTL0 |= _00_ITL_MODE_8BIT;
     ITLCSEL0 &= _F8_ITL_CLOCK_FITL0_CLEAR;
-    ITLCSEL0 |= _01_ITL_CLOCK_FITL0_FIHP;
+    ITLCSEL0 |= _04_ITL_CLOCK_FITL0_FSXP;
     ITLFDIV00 &= _F8_ITL_ITL000_FITL0_CLEAR;
-    ITLFDIV00 |= _07_ITL_ITL000_FITL0_128;
-    ITLCMP000 = _F9_ITL_ITLCMP000_VALUE;
+    ITLFDIV00 |= _00_ITL_ITL000_FITL0_1;
+    ITLCMP000 = _20_ITL_ITLCMP000_VALUE;
     
     R_Config_ITL000_Create_UserInit();
 }
@@ -116,4 +116,28 @@ void R_Config_ITL000_Set_OperationMode(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
+void R_Config_ITL000_SetCompareMatch_For_MainClock(void)
+{
+//	ITLEN00 = 0U;
+
+    ITLCSEL0 &= _F8_ITL_CLOCK_FITL0_CLEAR;
+    ITLCSEL0 |= _01_ITL_CLOCK_FITL0_FIHP;
+    ITLFDIV00 &= _F8_ITL_ITL000_FITL0_CLEAR;
+    ITLFDIV00 |= _07_ITL_ITL000_FITL0_128;
+    ITLCMP000 = _F9_ITL_ITLCMP000_VALUE;
+
+}
+
+void R_Config_ITL000_SetCompareMatch(void)
+{
+//	ITLEN00 = 0U;
+
+    ITLCSEL0 &= _F8_ITL_CLOCK_FITL0_CLEAR;
+    ITLCSEL0 |= _04_ITL_CLOCK_FITL0_FSXP;
+    ITLFDIV00 &= _F8_ITL_ITL000_FITL0_CLEAR;
+    ITLFDIV00 |= _00_ITL_ITL000_FITL0_1;
+    ITLCMP000 = _20_ITL_ITLCMP000_VALUE;
+
+ }
+
 /* End user code. Do not edit comment generated here */

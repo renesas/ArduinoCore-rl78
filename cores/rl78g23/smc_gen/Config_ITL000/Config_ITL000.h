@@ -40,9 +40,7 @@ Macro definitions (Register bit)
 /***********************************************************************************************************************
 Macro definitions
 ***********************************************************************************************************************/
-#define _F9_ITL_ITLCMP000_VALUE                    (0xF9U)    /* 8-bit compare data register */
-#define _FA_ITL_ITLCMP000_VALUE                    (0xFAU)    /* 8-bit compare data register */
-#define _01_ITL_ITLCMP000_VALUE                    (0x01U)    /* 8-bit compare data register */
+#define _20_ITL_ITLCMP000_VALUE                    (0x20U)    /* 8-bit compare data register */
 
 /***********************************************************************************************************************
 Typedef definitions
@@ -58,5 +56,8 @@ void R_Config_ITL000_Set_OperationMode(void);
 void R_Config_ITL000_Callback_Shared_Interrupt(void);
 void R_Config_ITL000_Create_UserInit(void);
 /* Start user code for function. Do not edit comment generated here */
+#define _F9_ITL_ITLCMP000_VALUE	(0xF9)
+void R_Config_ITL000_SetCompareMatch_For_MainClock(void);
+void R_Config_ITL000_SetCompareMatch(void);
 /* End user code. Do not edit comment generated here */
 #endif

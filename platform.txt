@@ -4,11 +4,12 @@
 # For more info:
 # LLVM Prototype Package for Tools Test
 name=Renesas RL78/G23
-version=1.0.0
+version=1.1.1
 
 # --------------------- 
 # AVR compile variables
 # --------------------- 
+#compiler.optimize =-O2
 compiler.optimize =-O0
 
 #------------------------------------#
@@ -54,8 +55,73 @@ compiler.size.flags=--format=berkeley -x --totals --common --version
 #------------------------------------#
 # LLVM include paths
 #------------------------------------#
-compiler.includes="-I{runtime.platform.path}/cores/rl78g23/avr" "-I{runtime.platform.path}/cores/rl78g23" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ADC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART1" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART2" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_0_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_01_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_23_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_45_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_67_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Mesure_Signal" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Square_Wave" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA0" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA1" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_WDT" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL000" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL001" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL012" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_INTC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_CSI11" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA01" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA11" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_CSI111" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_RTC" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_01_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_23_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_45_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_67_PWM" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_bsp" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_config" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/general" "-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_bsp" 
+#--------------------------------------------------#
+# Add Config_TAU0_*_Servo for Servo Motor Library
+#--------------------------------------------------#
+inc0="-I{runtime.platform.path}/cores/rl78g23" 
+inc1="-I{runtime.platform.path}/cores/rl78g23/avr" 
+inc2="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ADC" 
+inc3="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART0" 
+inc4="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART1" 
+inc5="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_UART2" 
+inc6="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_01_PWM" 
+inc7="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_0_Mesure_Signal" 
+inc8="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Mesure_Signal" 
+inc9="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Square_Wave" 
+inc10="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Mesure_Signal" 
+inc11="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Square_Wave" 
+inc12="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_23_PWM" 
+inc13="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Mesure_Signal" 
+inc14="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Square_Wave" 
+inc15="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Mesure_Signal" 
+inc16="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Square_Wave" 
+inc17="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_45_PWM" 
+inc18="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Mesure_Signal" 
+inc19="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Square_Wave" 
+inc20="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Mesure_Signal" 
+inc21="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Square_Wave" 
+inc22="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_67_PWM" 
+inc23="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Mesure_Signal" 
+inc24="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Square_Wave" 
+inc25="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_Servo" 
+inc26="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_6_Servo" 
+inc27="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_5_Servo" 
+inc28="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_4_Servo" 
+inc29="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_3_Servo" 
+inc30="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_2_Servo" 
+inc31="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_1_Servo" 
+inc32="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA0" 
+inc33="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_IICA1" 
+inc34="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_WDT" 
+inc35="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL000" 
+inc36="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL001" 
+inc37="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL012" 
+inc38="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_INTC" 
+inc39="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_CSI11" 
+inc40="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_RTC" 
+inc41="-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_bsp" 
+inc42="-I{runtime.platform.path}/cores/rl78g23/smc_gen/r_config" 
+inc43="-I{runtime.platform.path}/cores/rl78g23/smc_gen/general" 
 
+inc44="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers" 
+inc45="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/drv_if" 
+inc46="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver" 
+inc47="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver/com"
+inc48="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver/com/rl78_32MHz_LLVM" 
+inc49="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver/mmc" 
+inc50="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver/mmc/rl78" 
+inc51="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat" 
+inc52="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat/include" 
+inc53="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat/src" 
+
+incA={inc0} {inc1} {inc2} {inc3} {inc4} {inc5} {inc6} {inc7} {inc8} {inc9} 
+incB={inc10} {inc11} {inc12} {inc13} {inc14} {inc15} {inc16} {inc17} {inc18} {inc19} 
+incC={inc20} {inc21} {inc22} {inc23} {inc24} {inc25} {inc26} {inc27} {inc28} {inc29} 
+incD={inc30} {inc31} {inc32} {inc33} {inc34} {inc35} {inc36} {inc37} {inc38} {inc39} 
+incE={inc40} {inc41} {inc42} {inc43} {inc44} {inc45} {inc46} {inc47} {inc48} {inc49} 
+incF={inc50} {inc51} {inc52} {inc53} 
+
+compiler.includes={incA} {incB} {incC} {incD} {incE} {incF}
 
 # this can be overriden in boards.txt
 build.extra_flags=

@@ -61,6 +61,22 @@ void R_Config_INTC_Create_UserInit(void)
 }
 
 /***********************************************************************************************************************
+* Function Name: r_Config_INTC_intp0_interrupt
+* Description  : This function is INTP0 interrupt service routine
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void r_Config_INTC_intp0_interrupt(void)
+{
+    /* Start user code for r_Config_INTC_intp0_interrupt. Do not edit comment generated here */
+    if (g_afInterruptFuncTable[6] != NULL) {
+        (*g_afInterruptFuncTable[6])();
+    }
+    /* End user code. Do not edit comment generated here */
+}
+
+
+/***********************************************************************************************************************
 * Function Name: r_Config_INTC_intp1_interrupt
 * Description  : This function is INTP1 interrupt service routine
 * Arguments    : None

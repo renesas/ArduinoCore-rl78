@@ -1,8 +1,10 @@
 #ifndef TwoWire_IICA_h
 #define TwoWire_IICA_h
 
+extern "C" {
 #include "r_cg_macrodriver.h"
 #include "r_cg_iica.h"
+}
 
 #include "Arduino.h"
 

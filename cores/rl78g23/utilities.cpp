@@ -18,6 +18,9 @@ extern uint8_t g_u8PowerManagementMode;
 extern uint8_t g_u8OperationClockMode;
 extern volatile unsigned long g_u32delay_timer;
 extern volatile unsigned long g_timer05_overflow_count;
+extern uint8_t g_delay_cnt_flg;
+extern uint8_t g_delay_cnt_micros_flg;
+extern volatile unsigned long g_u32delay_micros_timer;
 
 extern uint8_t g_u8ADUL;
 extern uint8_t g_u8ADLL;
@@ -331,6 +334,10 @@ uint16_t getVersion()
 {
 	return RLDUINO78_VERSION;
 }
+
+#define USE_POWER_MANAGEMENT (0) // Set 1 when issue was solved.
+
+#if USE_POWER_MANAGEMENT == 1
 /** @} group14 その他 */
 
 
@@ -471,7 +478,7 @@ uint8_t getOperationClockMode()
  ***************************************************************************/
 void setOperationClockMode(uint8_t u8ClockMode)
 {
-
+#if !defined(G23_FPB)
 	if (u8ClockMode == CLK_HIGH_SPEED_MODE) {
 		// 動作クロックの変更
 		if (HIOSTOP == 1) {
@@ -504,8 +511,46 @@ void setOperationClockMode(uint8_t u8ClockMode)
 			g_u8OperationClockMode = CLK_LOW_SPEED_MODE;
 		}
 	}
+#else // !defined(G23_FPB)
+    if (g_u8OperationClockMode == u8ClockMode)
+    {
+        // If there is no change from the existing mode, it will not be processed.
+        return;
+    }
+    else
+    if (u8ClockMode == CLK_HIGH_SPEED_MODE)
+    {
+        // The high-speed on-chip oscillator starts operating.
+        R_BSP_StartClock (HIOCLK);
+        // Switch to a high-speed on-chip oscillator.
+        if (BSP_OK == R_BSP_SetClockSource (HIOCLK))
+        {
+            g_u8OperationClockMode = CLK_HIGH_SPEED_MODE;
+        }
+        else
+        {
+            /* not implementation */
+        }
+    }
+    else
+    if (u8ClockMode == CLK_LOW_SPEED_MODE)
+    {
+        // Stops the operation of the high-speed on-chip oscillator.
+        R_BSP_StopClock (HIOCLK);
+        // Switch to a low-speed on-chip oscillator.
+        if (BSP_OK == R_BSP_SetClockSource (LOCLK))
+        {
+            g_u8OperationClockMode = CLK_LOW_SPEED_MODE;
+        }
+        else
+        {
+            /* not implementation */
+        }
+    }
+#endif
 }
 /** @} group15 パワーマネージメント/クロック制御関数 */
+#endif /* USE_POWER_MANAGEMENT == 1
 
 
 /** ************************************************************************
@@ -866,5 +911,58 @@ void enterPowerManagementMode(unsigned long u32ms)
 		TMMK05     = 0;
 
 	}
+#else
+    uint8_t u8PMmode;
+
+    /* Check the set power saving mode and the status of RL78,
+       and determine the instruction that can be actually issued.
+     */
+    u8PMmode = g_u8PowerManagementMode;
+
+    if (u32ms == 0xFFFFFFFF)
+    {
+//        ITLMK = 1;            // Mask Interval Timer
+        /* When the interrupt of TML32 is masked and the mode is changed to STOP mode,
+           the interrupt mask is not applied as a temporary measure because the
+           implementation that clears ITLS0 to 0 has not been completed.
+         */
+        _STOP();
+        ITLMK = 0;            // Unmask Interval Timer
+    }
+    else
+    {
+        if (1U == g_delay_cnt_flg)
+        {
+            while (g_u32delay_timer < u32ms) {
+                if (u8PMmode == PM_STOP_MODE) {
+                    _STOP();
+                }
+                else if (u8PMmode == PM_HALT_MODE){
+                    _HALT();
+                }
+                else
+                {
+                    NOP();
+                }
+            }
+        }
+        else
+        if (1U == g_delay_cnt_micros_flg)
+        {
+            while (g_u32delay_micros_timer < u32ms) {
+                if (u8PMmode == PM_STOP_MODE) {
+                    _STOP();
+                }
+                else if (u8PMmode == PM_HALT_MODE){
+                    _HALT();
+                }
+                else
+                {
+                    NOP();
+                }
+            }
+        }
+    }
+
 #endif
 }

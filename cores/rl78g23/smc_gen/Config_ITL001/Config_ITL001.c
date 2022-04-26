@@ -116,11 +116,24 @@ void R_Config_ITL001_Set_OperationMode(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
-void R_Config_ITL001_SetCompareMatch(void)
+void R_Config_ITL001_SetCompareMatch(uint8_t count,uint8_t div)
 {
 	ITLEN01 = 0U;
+
+	ITLCSEL0 &= _F8_ITL_CLOCK_FITL0_CLEAR;
+    ITLCSEL0 |= _01_ITL_CLOCK_FITL0_FIHP;
     ITLFDIV00 &= _8F_ITL_ITL001_FITL0_CLEAR;
-    ITLFDIV00 |= _00_ITL_ITL001_FITL0_1;
-    ITLCMP001 = _20_ITL_ITLCMP001_VALUE;
+
+//    ITLFDIV00 &= _8F_ITL_ITL001_FITL0_CLEAR;
+//    ITLFDIV00 |= _00_ITL_ITL001_FITL0_1;
+////    ITLCMP001 = _20_ITL_ITLCMP001_VALUE;
+//    ITLCMP001 = _1F_ITL_ITLCMP001_VALUE;
+
+//    ITLFDIV00 |= _40_ITL_ITL001_FITL0_16;
+//    ITLCMP001 = _01_ITL_ITLCMP001_VALUE;
+
+    ITLFDIV00 |= div;
+	ITLCMP001 = count;
+
 }
 /* End user code. Do not edit comment generated here */

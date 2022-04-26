@@ -74,6 +74,9 @@ void R_Config_INTC_Create(void)
     PIF10 = 0U;    /* clear INTP10 interrupt flag */
     PMK11 = 1U;    /* disable INTP11 operation */
     PIF11 = 0U;    /* clear INTP11 interrupt flag */
+    /* Set INTP0 low priority */
+	PPR10 = 1U;
+	PPR00 = 1U;
     /* Set INTP1 low priority */
     PPR11 = 1U;
     PPR01 = 1U;
@@ -93,9 +96,9 @@ void R_Config_INTC_Create(void)
     PPR111 = 1U;
     PPR011 = 1U;
     EGN0 = _10_INTP4_EDGE_FALLING_SEL | _08_INTP3_EDGE_FALLING_SEL | _04_INTP2_EDGE_FALLING_SEL | 
-           _02_INTP1_EDGE_FALLING_SEL;
+           _02_INTP1_EDGE_FALLING_SEL | _01_INTP0_EDGE_FALLING_SEL;
     EGP0 = _00_INTP4_EDGE_RISING_UNSEL | _00_INTP3_EDGE_RISING_UNSEL | _00_INTP2_EDGE_RISING_UNSEL | 
-           _00_INTP1_EDGE_RISING_UNSEL;
+           _00_INTP1_EDGE_RISING_UNSEL | _00_INTP0_EDGE_RISING_UNSEL ;
     EGN1 = _08_INTP11_EDGE_FALLING_SEL | _04_INTP10_EDGE_FALLING_SEL;
     EGP1 = _00_INTP11_EDGE_RISING_UNSEL | _00_INTP10_EDGE_RISING_UNSEL;
     /* Set INTP1 pin */
@@ -121,6 +124,30 @@ void R_Config_INTC_Create(void)
     PM7 |= 0x80U;
 
     R_Config_INTC_Create_UserInit();
+}
+
+/***********************************************************************************************************************
+* Function Name: R_Config_INTC_INTP0_Start
+* Description  : This function clears INTP0 interrupt flag and enables interrupt.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_Config_INTC_INTP0_Start(void)
+{
+    PIF0 = 0U;    /* clear INTP0 interrupt flag */
+    PMK0 = 0U;    /* enable INTP0 interrupt */
+}
+
+/***********************************************************************************************************************
+* Function Name: R_Config_INTC_INTP0_Stop
+* Description  : This function disables INTP0 interrupt and clears interrupt flag.
+* Arguments    : None
+* Return Value : None
+***********************************************************************************************************************/
+void R_Config_INTC_INTP0_Stop(void)
+{
+    PMK0 = 1U;    /* disable INTP0 interrupt */
+    PIF0 = 0U;    /* clear INTP0 interrupt flag */
 }
 
 /***********************************************************************************************************************
@@ -404,6 +431,29 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
             EGN0_bit.no3 = 0U;
         }
         break;
+
+    case 6:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_6;
+        value.modeNum = mode;
+        /* 割り込みモードの設定 */
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no0 = 0U;
+            EGN0_bit.no0 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no0 = 1U;
+            EGN0_bit.no0 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no0 = 1U;
+            EGN0_bit.no0 = 1U;
+        }
+        else{
+            EGP0_bit.no0 = 0U;
+            EGN0_bit.no0 = 0U;
+        }
+        break;
     }
 }
 
@@ -426,6 +476,9 @@ void R_Config_INTC_INTP_Start(void){
     else if (value.pinNum == EXTERNAL_INTERRUPT_5){
         R_Config_INTC_INTP3_Start();
     }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_6){
+            R_Config_INTC_INTP0_Start();
+        }
 }
 
 void R_Config_INTC_INTP_Stop(uint8_t interruptNum){
@@ -448,6 +501,9 @@ void R_Config_INTC_INTP_Stop(uint8_t interruptNum){
         case 5:
             R_Config_INTC_INTP3_Stop();
             break;
+        case 6:
+			   R_Config_INTC_INTP0_Stop();
+			   break;
     }
 }
 /* End user code. Do not edit comment generated here */

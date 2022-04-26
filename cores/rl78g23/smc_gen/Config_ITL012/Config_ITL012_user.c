@@ -46,7 +46,7 @@ Global variables and functions
 /* Start user code for global. Do not edit comment generated here */
 extern volatile unsigned long g_u32timer_micros;
 extern volatile unsigned long g_u32delay_micros_timer;
-uint8_t g_delay_cnt_micros_flg;
+extern uint8_t g_delay_cnt_micros_flg;
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************

@@ -39,8 +39,6 @@ Includes
 #include "Config_IICA0.h"
 #include "Config_IICA1.h"
 #include "Config_WDT.h"
-#include "Config_IICA01.h"
-#include "Config_IICA11.h"
 #include "Config_RTC.h"
 #include "r_cg_sau_common.h"
 #include "r_cg_tau_common.h"
@@ -79,7 +77,7 @@ void R_Systeminit(void)
     R_Config_IICA0_Create();
     R_Config_IICA1_Create();
     R_Config_WDT_Create();
-    R_Config_IICA01_Create();
-    R_Config_IICA11_Create();
+    /* The RTC initializes when using the function.
     R_Config_RTC_Create();
+     */
 }

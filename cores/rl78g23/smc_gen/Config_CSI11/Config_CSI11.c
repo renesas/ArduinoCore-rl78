@@ -59,7 +59,8 @@ volatile uint16_t g_csi11_status_flag;
 void R_Config_CSI11_Create(void)
 {
     SPS0 &= _000F_SAU_CK01_CLEAR;
-    SPS0 |= _0040_SAU_CK01_FCLK_4;
+//    SPS0 |= _0040_SAU_CK01_FCLK_4;
+	SPS0 |= _0000_SAU_CK01_FCLK_0;
     /* Stop channel 3 */
     ST0 |= _0008_SAU_CH3_STOP_TRG_ON;
     /* Mask channel 3 interrupt */
@@ -282,9 +283,10 @@ void R_Config_CSI11_SetClockDivider(uint16_t clockDiv) {
  *********************************************************************************************************************/
 void R_Config_CSI11_SetClock(uint32_t clock) {
     uint16_t clockDiv;
+    uint32_t spi_frequency = R_BSP_GetFclkFreqHz() >> ((SPS0 >> 4) & 0x0F);
 
     for (clockDiv = 2; clockDiv < 256; clockDiv += 2) {
-        if (clock >= F_CPU / clockDiv) {
+    	if (clock >= spi_frequency / clockDiv) {
             break;
         }
     }

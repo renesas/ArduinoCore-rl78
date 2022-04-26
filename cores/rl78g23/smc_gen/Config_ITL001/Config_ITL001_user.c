@@ -58,8 +58,8 @@ extern uint8_t g_delay_cnt_micros_flg;
 void R_Config_ITL001_Create_UserInit(void)
 {
     /* Start user code for user init. Do not edit comment generated here */
-    ITLFDIV00 |= _50_ITL_ITL001_FITL0_32;
-    ITLCMP000 = _01_ITL_ITLCMP001_VALUE;
+//    ITLFDIV00 |= _50_ITL_ITL001_FITL0_32;
+//    ITLCMP000 = _01_ITL_ITLCMP001_VALUE;
 	g_u32timer_micros=0;
 	/* End user code. Do not edit comment generated here */
 }

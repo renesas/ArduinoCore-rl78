@@ -59,7 +59,6 @@ extern uint8_t g_timer_millis_overflow_cnt;
 void R_Config_ITL000_Create_UserInit(void)
 {
     /* Start user code for user init. Do not edit comment generated here */
-    ITLCMP000 = _FA_ITL_ITLCMP000_VALUE;
     g_u32timer_millis=0;
 	g_timer_millis_overflow_cnt=0;
 	/* End user code. Do not edit comment generated here */
