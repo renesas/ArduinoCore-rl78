@@ -24,6 +24,8 @@ extern volatile unsigned long g_u32delay_micros_timer;
 
 extern uint8_t g_u8ADUL;
 extern uint8_t g_u8ADLL;
+extern uint16_t g_u16ADUL;
+extern uint16_t g_u16ADLL;
 
 void (*INT_TM_HOOK)() ;
 
@@ -335,7 +337,7 @@ uint16_t getVersion()
 	return RLDUINO78_VERSION;
 }
 
-#define USE_POWER_MANAGEMENT (0) // Set 1 when issue was solved.
+#define USE_POWER_MANAGEMENT (1) // Set 1 when issue was solved. //KAD change from 0 to 1
 
 #if USE_POWER_MANAGEMENT == 1
 /** @} group14 その他 */
@@ -397,15 +399,15 @@ void setPowerManagementMode(uint8_t u8PowerManagementMode, uint16_t u16ADLL, uin
 	switch (u8PowerManagementMode) {
 	case PM_NORMAL_MODE:
 	case PM_HALT_MODE:
-		g_u8ADLL = 0x00;
-		g_u8ADUL = 0xFF;
+        g_u16ADLL = 0;
+        g_u16ADUL = 1023;
 		g_u8PowerManagementMode = u8PowerManagementMode;
 		break;
 
 	case PM_STOP_MODE:
 		if (CLS == 0) {
-			g_u8ADLL = 0x00;
-			g_u8ADUL = 0xFF;
+		    g_u16ADLL = 0;
+		    g_u16ADUL = 1023;
 			g_u8PowerManagementMode = u8PowerManagementMode;
 		}
 		break;
@@ -419,12 +421,11 @@ void setPowerManagementMode(uint8_t u8PowerManagementMode, uint16_t u16ADLL, uin
 				u16ADUL = 1023;
 			}
 			if (u16ADLL > u16ADUL) {
-				u16ADLL = 0x00;
-				u16ADUL = 0xFF;
-			} else {
-				g_u8ADLL = (uint8_t)(u16ADLL >> 2);
-				g_u8ADUL = (uint8_t)(u16ADUL >> 2);
+				u16ADLL = 0;
+				u16ADUL = 1023;
 			}
+            g_u16ADLL = u16ADLL;
+            g_u16ADUL = u16ADUL;
 			g_u8PowerManagementMode = u8PowerManagementMode;
 		}
 		break;
@@ -787,7 +788,8 @@ void outputClock(uint8_t u8Pin, uint32_t u32Frequency)
 }
 #endif
 
-#if 0
+
+//#if 1
 /**
  * MCUに内蔵されている温度センサから温度（摂氏/華氏）を取得します。
  *
@@ -818,7 +820,7 @@ int getTemperature(uint8_t u8Mode)
 	FUNC_MUTEX_UNLOCK;
 
 	return (int)fResult;
-#else
+#elif 0
 	int s16Result1, s16Result2;
 	long s32Temp;
 	int s16Result;
@@ -871,9 +873,78 @@ int getTemperature(uint8_t u8Mode)
 	}
 
 	return s16Result;
-#endif
+#else
+	extern uint8_t  g_adc_int_flg;
+    uint8_t u8count;
+    uint16_t u16temp;
+    uint16_t u16temp1; //温度センサ出力の値を入れる変数
+    uint16_t u16temp2; //内部基準電圧出力の値を入れる変数
+    int32_t s32Temp;
+    int s16Result = 0;
+
+    //温度センサ出力電圧で値を取得するためのレジスタの設定をします。
+    R_Config_ADC_Set_TemperatureSensor();
+
+    R_Config_ADC_Set_OperationOn();
+
+    for (u8count = 0; u8count < 2; u8count ++)
+    {
+    	g_adc_int_flg = 0;
+    	R_Config_ADC_Start();
+        while(1)
+        {
+            if(g_adc_int_flg == 1)
+            {
+ 	            R_Config_ADC_Get_Result_10bit(&u16temp);
+ 	            u16temp1 = u16temp;//温度センサ出力の値を入れる
+   	            g_adc_int_flg = 0;
+   	            break;
+             }
+        }
+
+     }
+
+    u8count = 0;
+    //内部基準電圧出力で値を取得します。
+    R_Config_ADC_Set_InternalReferenceVoltage();
+    R_Config_ADC_Set_OperationOn();
+
+    for (u8count = 0; u8count < 2; u8count ++)
+    {
+    	g_adc_int_flg = 0;
+    	R_Config_ADC_Start();
+        while(1)
+        {
+            if(g_adc_int_flg == 1)
+            {
+    	         R_Config_ADC_Get_Result_10bit(&u16temp);
+    	         u16temp2 = u16temp;//内部基準電圧出力の値を入れる
+      	         g_adc_int_flg = 0;
+      	         break;
+            }
+        }
+    }
+
+    //取得した値を使用し、温度を導きます。
+    volatile long n14800L = 14800L;
+	s32Temp = n14800L *u16temp1 / u16temp2 - 10500L;
+	if (u8Mode == TEMP_MODE_FAHRENHEIT)
+	{
+		//華氏
+		s16Result = s32Temp / -33 * 18 / 10;
+		s16Result += 77;
+	}
+	else
+	{
+		//摂氏
+        s16Result = s32Temp / -33;
+		s16Result += 25;
+	}
+	return s16Result;
+
 }
 #endif
+
 
 void enterPowerManagementMode(unsigned long u32ms)
 {
@@ -927,7 +998,7 @@ void enterPowerManagementMode(unsigned long u32ms)
            implementation that clears ITLS0 to 0 has not been completed.
          */
         _STOP();
-        ITLMK = 0;            // Unmask Interval Timer
+//        ITLMK = 0;            // Unmask Interval Timer
     }
     else
     {
@@ -966,3 +1037,40 @@ void enterPowerManagementMode(unsigned long u32ms)
 
 #endif
 }
+
+/* リセット要因の読み出し */
+void _readResetFlag()
+{
+    uint8_t resetflag;
+
+    resetflag = RESF;
+    RESF = 0x00;
+
+    if(resetflag == 0x80)             /* 不正命令の実行によるリセット */
+    {
+        g_u8ResetFlag = 0x80;
+    }
+    else if(resetflag == 0x10)        /* ウォッチドックタイマによるリセット */
+    {
+        g_u8ResetFlag = 0x10;
+    }
+    else if(resetflag == 0x04)        /* RAMパリティエラーによるリセット */
+    {
+        g_u8ResetFlag = 0x04;
+    }
+    else if(resetflag == 0x02)        /* 不正メモリアクセスによるリセット */
+    {
+        g_u8ResetFlag = 0x02;
+    }
+    else if(resetflag == 0x01)        /* 低電圧検出によるリセット */
+    {
+        g_u8ResetFlag = 0x01;
+    }
+    else                              /* 外部リセットorパワーオンリセットによるリセット */
+    {
+        g_u8ResetFlag = 0x00;
+    }
+
+	return;
+}
+

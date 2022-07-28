@@ -47,6 +47,14 @@ Global variables and functions
 extern volatile unsigned long g_u32timer_micros;
 extern volatile unsigned long g_u32delay_micros_timer;
 extern uint8_t g_delay_cnt_micros_flg;
+
+extern volatile unsigned long g_u32timer_millis;  
+extern uint8_t g_timer_millis_overflow_cnt;
+
+extern volatile uint8_t g_u8delay_micros_timer_flg;
+extern volatile uint16_t g_u16delay_micros_timer_set;   
+extern volatile uint16_t g_u16delay_micros_timer_total;   
+
 /* End user code. Do not edit comment generated here */
 
 /***********************************************************************************************************************
@@ -73,11 +81,23 @@ void R_Config_ITL001_Create_UserInit(void)
 void R_Config_ITL001_Callback_Shared_Interrupt(void)
 {
     /* Start user code for R_Config_ITL001_Callback_Shared_Interrupt. Do not edit comment generated here */
-	g_u32timer_micros++;
-	if(1U==g_delay_cnt_micros_flg)
-	{
-		g_u32delay_micros_timer++;
-	}
+    R_Config_ITL001_Stop();
+    g_u32timer_micros++;
+    if(1U==g_delay_cnt_micros_flg)
+    {
+        g_u8delay_micros_timer_flg = 1;
+    }
+
+    g_u16delay_micros_timer_total += g_u16delay_micros_timer_set;
+    if(g_u16delay_micros_timer_total >= 1000)
+    {
+        g_u16delay_micros_timer_total -= 1000;
+        g_u32timer_millis++;
+        if (0 == g_u32timer_millis)
+        {
+            g_timer_millis_overflow_cnt++;
+        }
+    }
 	/* End user code. Do not edit comment generated here */
 }
 

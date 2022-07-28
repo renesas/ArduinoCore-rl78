@@ -77,7 +77,7 @@ void R_Systeminit(void)
     R_Config_IICA0_Create();
     R_Config_IICA1_Create();
     R_Config_WDT_Create();
-    /* The RTC initializes when using the function.
+//KAD    /* The RTC initializes when using the function.
     R_Config_RTC_Create();
-     */
+//KAD     */
 }

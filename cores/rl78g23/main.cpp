@@ -52,11 +52,15 @@ int main(void)
 /******************************************************/
 	interrupts();				/* Enable Interrupt */
 
+    _readResetFlag();           /* Read causes of reset */
+
 /* Start Interval Timer */
 	R_Config_ITL000_Create();	/* Create 1ms Interval Timer */
 	R_Config_ITL000_Start();	/* Start 1ms Interval Timer */
 	R_ITL_Start_Interrupt();	/* Start ITL Interrupt */
 
+	/* Start RTC Timer */
+    R_Config_RTC_Start();    /*//KAD Start RTC Timer */
 
 /* Power Off unused Peripheral */
 /* SERIAL ARRAY UNIT (SAU) */

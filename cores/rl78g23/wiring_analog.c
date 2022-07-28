@@ -36,9 +36,12 @@
 extern uint8_t g_adc_int_flg;
 static uint8_t g_u8AnalogReference = DEFAULT;
 static uint8_t g_u8SwPwmTicksCount = 0;
-uint8_t g_u8ADUL = 0xFF;
-uint8_t g_u8ADLL = 0x00;
+//uint8_t g_u8ADUL = 0xFF;
+//uint8_t g_u8ADLL = 0x00;
 boolean g_bAdcInterruptFlag = false;
+
+uint16_t g_u16ADUL;
+uint16_t g_u16ADLL;
 
 /* 1027 Nhu add */
 extern uint32_t R_BSP_GetFclkFreqHz(void);
@@ -889,14 +892,14 @@ static int _analogRead(uint8_t u8ADS) {
 	}
 	R_Config_ADC_Set_OperationOff();
 	R_Config_ADC_Start();
-#else
+#elif 0
     // 1. AD reference setting
 	R_Config_ADC_Set_Reference (g_u8AnalogReference);
     // 2. Trigger mode setting
     if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
     {
-        // Hardware trigger wait mode(interval timer), one-shot conversion
-        ADM1 = 0xE3;
+        // Hardware trigger wait mode(RTC), one-shot conversion
+        ADM1 = 0xE2;
     }
     else
     {
@@ -907,14 +910,30 @@ static int _analogRead(uint8_t u8ADS) {
     ADUL = g_u8ADUL;
     ADLL = g_u8ADLL;
 
+    if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+    {
+        R_Config_ITL000_Stop();
+    }
+
     // 4. AD channel setting
     R_Config_ADC_Set_ADChannel(u8ADS);
-    // 5. AD comparator ON
-    R_Config_ADC_Set_OperationOn();
-    // 6. Snooze mode ON (interrupt enabled)
-	R_Config_ADC_Set_SnoozeOn();
+
     g_adc_int_flg=0;
-	R_Config_ADC_Start();
+    if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+    {
+        // 6. Snooze mode ON (interrupt enabled)
+        R_Config_ADC_Set_SnoozeOn();
+        R_Config_ADC_Snooze_Start();
+        // 5. AD comparator ON
+        R_Config_ADC_Set_OperationOn();
+    }
+    else
+    {
+        // 5. AD comparator ON
+        R_Config_ADC_Set_OperationOn();
+        R_Config_ADC_Start();
+    }
+
     // 7. After STOP mode until AD interrupt occurs (loop processing)
     while (0 == g_adc_int_flg)
     {
@@ -927,9 +946,17 @@ static int _analogRead(uint8_t u8ADS) {
             NOP();
         }
     }
+
     // 8. Snooze mode Off (interrupt stop)
-    R_Config_ADC_Set_SnoozeOff();
-    ADMK = 1;
+    if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+    {
+        R_Config_ADC_Set_SnoozeOff();
+        R_Config_ADC_Snooze_Stop();
+    }
+    else
+    {
+        R_Config_ADC_Stop();
+    }
     // 9. Get AD conversion result
     if (DEFAULT == g_u8AnalogReference)
     {
@@ -939,10 +966,100 @@ static int _analogRead(uint8_t u8ADS) {
     {
         R_Config_ADC_Get_Result_8bit ((uint8_t*) &s16Result);
     }
+
     // 10.AD Comparator Off
     R_Config_ADC_Set_OperationOff();
-    // 11. Return the result
+
+    if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+    {
+        R_Config_ITL000_Start();
+    }
+#else
+    uint8_t adc_end_flg = 0;
+    // 1. AD reference setting
+    R_Config_ADC_Set_Reference (g_u8AnalogReference);
+
+    // 3. Snooze mode return upper / lower limit setting
+    R_Config_ADC_Set_ComparisonLimit((uint8_t)(g_u16ADUL >> 2), (uint8_t)(g_u16ADLL >> 2));
+    // 4. AD channel setting
+    R_Config_ADC_Set_ADChannel(u8ADS);
+
+    while(0 == adc_end_flg)
+    {
+        g_adc_int_flg=0;
+
+        // 2. Trigger mode setting
+        if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+        {
+            R_Config_ITL000_Stop();
+            // Hardware trigger wait mode(RTC), one-shot conversion
+            R_Config_ADC_Set_ModeTrigger(PM_SNOOZE_MODE);
+            // 6. Snooze mode ON (interrupt enabled)
+            R_Config_ADC_Set_SnoozeOn();    //AWC =1
+            // 5. AD comparator ON
+            R_Config_ADC_Snooze_Start();    //enable interrupt & ADCS=1
+
+        }
+        else
+        {
+            // Software trigger mode, one-shot conversion
+            R_Config_ADC_Set_ModeTrigger(PM_NORMAL_MODE);
+            // 5. AD comparator ON
+            R_Config_ADC_Set_OperationOn();  //ADCE=1 & wait
+            R_Config_ADC_Start();            //ADCS=1 & enable interrupt
+        }
+
+        // 7. After STOP mode until AD interrupt occurs (loop processing)
+        while (0 == g_adc_int_flg)
+        {
+            if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+            {
+                enterPowerManagementMode (0xFFFFFFFF);
+            }
+            else
+            {
+                NOP();
+            }
+        }
+
+        // 8. Snooze mode Off (interrupt stop)
+        if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+        {
+            R_Config_ADC_Set_SnoozeOff();
+            R_Config_ADC_Snooze_Stop();
+            R_Config_ITL000_Start();
+        }
+        else
+        {
+            R_Config_ADC_Stop();
+        }
+        // 9. Get AD conversion result
+        if (DEFAULT == g_u8AnalogReference)
+        {
+            R_Config_ADC_Get_Result_10bit ((uint16_t*) &s16Result);
+        }
+        else if (INTERNAL == g_u8AnalogReference)
+        {
+            R_Config_ADC_Get_Result_8bit ((uint8_t*) &s16Result);
+        }
+
+        if (PM_SNOOZE_MODE == g_u8PowerManagementMode)
+        {
+            if((g_u16ADLL <= s16Result) && (s16Result <= g_u16ADUL))
+            {
+                adc_end_flg = 1;
+            }
+        }
+        else
+        {
+            adc_end_flg = 1;
+        }
+    }
+    // 10.AD Comparator Off
+    R_Config_ADC_Set_OperationOff();
+
 #endif
+    // 11. Return the result
     return s16Result;
 }
 

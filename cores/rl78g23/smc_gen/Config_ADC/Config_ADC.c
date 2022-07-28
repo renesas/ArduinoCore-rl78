@@ -37,6 +37,7 @@ Includes
 #include "r_cg_macrodriver.h"
 #include "Config_ADC.h"
 /* Start user code for include. Do not edit comment generated here */
+#include <Arduino.h>
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
 
@@ -294,6 +295,103 @@ void R_Config_ADC_Get_Result_8bit(uint8_t * const buffer)
 {
     *buffer = ADCR0H;
 }
+
+void R_Config_ADC_Snooze_Start(void)
+{
+    ADIF = 0U;    /* clear INTAD interrupt flag */
+    ADMK = 0U;    /* enable INTAD interrupt */
+    ADCE = 1U;    /* enable AD comparator */
+}
+
+void R_Config_ADC_Snooze_Stop(void)
+{
+    ADIF = 0U;    /* clear INTAD interrupt flag */
+    ADMK = 1U;    /* disable INTAD interrupt */
+}
+
+void R_Config_ADC_Set_ModeTrigger(uint8_t mode)
+{
+    if (PM_SNOOZE_MODE == mode)
+    {
+        ADM1 = 0xE2;
+    }
+    else
+    {
+        ADM1 = 0x23;
+    }
+}
+
+void R_Config_ADC_Set_ComparisonLimit(uint8_t upper, uint8_t lower)
+{
+    ADUL = upper;
+    ADLL = lower;
+}
+
+
+//温度センサ出力のレジスタの設定
+void R_Config_ADC_Set_TemperatureSensor(void)
+{
+    ADCEN = 1U;    /* supply AD clock */
+    ADMK = 1U;    /* disable INTAD interrupt */
+    ADIF = 0U;    /* clear INTAD interrupt flag */
+    /* Set INTAD priority */
+    ADPR1 = 1U;
+    ADPR0 = 1U;
+
+    ADM0 = _00_AD_OPERMODE_SELECT | _08_AD_CONVERSION_CLOCK_16 | _02_AD_TIME_MODE_NORMAL_2;
+    ADM1 = _00_AD_TRIGGER_SOFTWARE | _00_AD_FCLK_BETWEEN_4_32 | _20_AD_CONVMODE_ONESELECT;
+    ADM2 = _00_AD_NEGATIVE_VSS | _00_AD_AREA_MODE_1 | _00_AD_RESOLUTION_10BIT;
+    ADUL = _FF_AD_ADUL_VALUE;
+    ADLL = _00_AD_ADLL_VALUE;
+
+    ADS = _80_AD_INPUT_TEMPERSENSOR_0;
+
+    ADM2 &= _3F_AD_POSITIVE_CLEAR;    /* clear ADREFP1 and ADREFP0 */
+    ADM2 |= _00_AD_POSITIVE_VDD;    /* set the reference voltage */
+
+    ADCE = 1U;
+
+    /* Reference voltage stability wait time (B), 1us+2fAD */
+    volatile uint16_t w_count;
+    for (w_count = 0U; w_count < AD_WAITTIME_B; w_count++)
+    {
+        NOP();
+    }
+
+}
+
+//内部基準電圧出力のレジスタ設定
+
+void R_Config_ADC_Set_InternalReferenceVoltage(void)
+{
+    ADCEN = 1U;    /* supply AD clock */
+    ADMK = 1U;    /* disable INTAD interrupt */
+    ADIF = 0U;    /* clear INTAD interrupt flag */
+    /* Set INTAD priority */
+    ADPR1 = 1U;
+    ADPR0 = 1U;
+    ADM0 = _00_AD_OPERMODE_SELECT | _08_AD_CONVERSION_CLOCK_16 | _02_AD_TIME_MODE_NORMAL_2;
+    ADM1 = _00_AD_TRIGGER_SOFTWARE | _00_AD_FCLK_BETWEEN_4_32 | _20_AD_CONVMODE_ONESELECT;
+    ADM2 = _00_AD_NEGATIVE_VSS | _00_AD_AREA_MODE_1 | _00_AD_RESOLUTION_10BIT;
+    ADUL = _FF_AD_ADUL_VALUE;
+    ADLL = _00_AD_ADLL_VALUE;
+
+    ADS = _81_AD_INPUT_INTERREFVOLT;
+
+    ADM2 &= _3F_AD_POSITIVE_CLEAR;    /* clear ADREFP1 and ADREFP0 */
+    ADM2 |= _00_AD_POSITIVE_VDD;    /* set the reference voltage */
+
+    ADCE = 1U;
+
+    /* Reference voltage stability wait time (B), 1us+2fAD */
+    volatile uint16_t w_count;
+    for (w_count = 0U; w_count < AD_WAITTIME_B; w_count++)
+    {
+        NOP();
+    }
+
+}
+
 
 /* 1006 Nhu add */
 /* End user code. Do not edit comment generated here */

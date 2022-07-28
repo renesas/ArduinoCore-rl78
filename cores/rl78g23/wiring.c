@@ -54,6 +54,11 @@ uint8_t g_delay_cnt_micros_flg = 0;
 
 volatile unsigned long g_u32timer_micros = 0u;	//!< インターバルタイマ変数
 volatile unsigned long g_u32delay_micros_timer  = 0u;	//!< delay() 用タイマ変数
+volatile uint8_t g_u8delay_micros_timer_flg  = 0u;   //!< microSecondタイマ割り込み検出フラグ
+
+volatile uint16_t g_u16delay_micros_timer_set;   //!< delay() 用タイマ変数
+volatile uint16_t g_u16delay_micros_timer_total = 0;   //!< delay() 用タイマ変数
+
 
 uint8_t g_timer_millis_overflow_cnt = 0;		/* mills over flow couner */
 unsigned long g_starttime_ms  = 0u;				/* mills starttime counter */
@@ -231,13 +236,15 @@ void delay(unsigned long ms)
 	}
 #else /*__RL78__*/
 
+	volatile lms = ms;
     g_delay_cnt_flg = 1U;
     g_u32delay_timer = 0U;
     if (g_u8PowerManagementMode == PM_NORMAL_MODE)
     {
 //        g_u32delay_timer = 0U; // todo:初期化の位置を変更
 //        g_delay_cnt_flg = 1U; // todo:flagの設定位置を変更
-        while (g_u32delay_timer < ms)
+//        while (g_u32delay_timer < ms)
+        while (g_u32delay_timer < lms)
         {
 //            HALT();
             // todo: 通常モード動作のためHALT移行を停止
@@ -320,7 +327,7 @@ void delayMicroseconds(unsigned long us)
 		"1: sbiw %0,1" "\n\t" 				// 2 cycles
 		"brne 1b" : "=w" (us) : "0" (us) 	// 2 cycles
 	);
-#else /*__RL78__*/
+#elif 0 /*__RL78__(1)*/
 
 	g_u32delay_micros_timer = 0U;
 	g_delay_cnt_micros_flg  = 1U;
@@ -333,9 +340,10 @@ void delayMicroseconds(unsigned long us)
 	}
 
 	R_Config_ITL000_Stop();								// Stop 1msec Timer
+#if 0 //KAD
 	R_Config_ITL000_SetCompareMatch_For_MainClock();	// Configuration 1msec Timer as Main Clock
 	R_Config_ITL000_Start();							// Start 1msec Timer
-
+#endif
 	uint8_t timer_count ;
 	uint8_t timer_div;
 	if (us<=128)
@@ -368,9 +376,132 @@ void delayMicroseconds(unsigned long us)
 		}
 	}
 	R_Config_ITL001_Stop();
+#if 0 //KAD
 	R_Config_ITL000_Stop();	// Stop 1msec Timer
+#endif
 	R_Config_ITL000_SetCompareMatch();
 	R_Config_ITL000_Start();	// Start 1msec Timer
+
+#else /*__RL78__*/
+    uint8_t timer_count;
+    uint8_t timer_div;
+    uint8_t before_timer_div = 0xFF;
+    uint8_t before_timer_count = 0xFF;
+    uint32_t u32us = us;
+    uint32_t u32us_millis;
+    uint16_t u16ush;
+    uint16_t u16usl;
+
+    g_delay_cnt_micros_flg  = 1U;
+
+    R_Config_ITL000_Stop();                             // Stop 1msec Timer
+    while (0 < u32us)
+    {
+        g_u8delay_micros_timer_flg = 0;
+
+        u16ush = (uint16_t)(u32us >> 16);
+        u16usl = (uint16_t)(u32us);
+        if (0 < u16ush)
+        {
+            /* more than 65536 us */
+            g_u16delay_micros_timer_set = 1024;
+            timer_count = 1024 / 4 - 1;
+            timer_div   = 0x70;
+        }
+        else if (8 >= u16usl)
+        {
+            /* 1 ~ 8us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl * 32 - 1;
+            timer_div   = 0x00;
+        }
+        else if (16 >= u16usl)
+        {
+            /* 9 ~ 16us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl * 16 - 1;
+            timer_div   = 0x10;
+        }
+        else if (32 >= u16usl)
+        {
+            /* 17 ~ 32us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl * 8 - 1;
+            timer_div   = 0x20;
+        }
+        else if (64 >= u16usl)
+        {
+            /* 33 ~ 64us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl * 4 - 1;
+            timer_div   = 0x30;
+        }
+        else if (128 >= u16usl)
+        {
+            /* 65 ~ 128us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl * 2 - 1;
+            timer_div   = 0x40;
+        }
+        else if (256 >= u16usl)
+        {
+            /* 128 ~ 256us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl - 1;
+            timer_div   = 0x50;
+        }
+        else if (u16usl<=512)
+        {
+            /* 257 ~ 512us */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl / 2 - 1;
+            timer_div   = 0x60;
+        }
+        else if(u16usl <= 1024)
+        {
+            /* 512 ~ 1023 */
+            g_u16delay_micros_timer_set = u16usl;
+            timer_count = u16usl / 4 - 1;
+            timer_div   = 0x70;
+        }
+        else
+        {
+            /* 1024 ~ */
+            g_u16delay_micros_timer_set = 1024;
+            timer_count = 1024 / 4 - 1;
+            timer_div   = 0x70;
+        }
+
+
+        if ((before_timer_div != timer_div) || (before_timer_count != timer_count))
+        {
+            /*　タイマ設定変更　*/
+            before_timer_div = timer_div;
+            before_timer_count = timer_count;
+            R_Config_ITL001_SetCompareMatch(timer_count,timer_div);
+        }
+
+        if ((PM_HALT_MODE == g_u8PowerManagementMode) || (PM_STOP_MODE == g_u8PowerManagementMode))
+        {
+            R_Config_ITL001_Start();
+            do
+            {
+                HALT();
+            } while (0 == g_u8delay_micros_timer_flg);
+        }
+        else
+        {
+            R_Config_ITL001_Start();
+            do
+            {
+                NOP();
+            } while (0 == g_u8delay_micros_timer_flg);
+        }
+        u32us -= g_u16delay_micros_timer_set;
+    }
+
+    R_Config_ITL000_SetCompareMatch();
+    R_Config_ITL000_Start();    // Start 1msec Timer
 
 #endif/*__RL78__*/
 }

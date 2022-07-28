@@ -60,6 +60,7 @@ void _stopTimerChannel(uint8_t u8TimerChannel);
 void _turnOffPwmPin(uint8_t u8Pin);
 void _softwarePWM(void);
 void enterPowerManagementMode(unsigned long u32ms);
+void _readResetFlag();
 #ifdef __cplusplus
 }
 #endif
