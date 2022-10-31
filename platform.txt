@@ -4,13 +4,13 @@
 # For more info:
 # LLVM Prototype Package for Tools Test
 name=Renesas RL78/G23
-version=1.2.0
+version=1.2.1
 
 # --------------------- 
 # AVR compile variables
 # --------------------- 
 #compiler.optimize =-O2
-compiler.optimize =-O0
+compiler.optimize =-Os
 
 #------------------------------------#
 # LLVM Compiler Common Variable

@@ -48,12 +48,12 @@ extern volatile unsigned long g_u32timer_micros;
 extern volatile unsigned long g_u32delay_micros_timer;
 extern uint8_t g_delay_cnt_micros_flg;
 
-extern volatile unsigned long g_u32timer_millis;  
+extern volatile unsigned long g_u32timer_millis;  //!< �C���^�[�o���^�C�}�ϐ�
 extern uint8_t g_timer_millis_overflow_cnt;
 
 extern volatile uint8_t g_u8delay_micros_timer_flg;
-extern volatile uint16_t g_u16delay_micros_timer_set;   
-extern volatile uint16_t g_u16delay_micros_timer_total;   
+extern volatile uint16_t g_u16delay_micros_timer_set;   //!< delay() �p�^�C�}�ϐ�
+extern volatile uint16_t g_u16delay_micros_timer_total;   //!< delay() �p�^�C�}�ϐ�
 
 /* End user code. Do not edit comment generated here */
 

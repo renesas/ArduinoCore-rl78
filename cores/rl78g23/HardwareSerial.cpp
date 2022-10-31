@@ -43,6 +43,12 @@ extern "C" {
 #include "Arduino.h"
 #include "platform.h"
 
+
+extern "C" {
+	#include "pintable.h"
+	extern const PinTableType * pinTablelist[NUM_DIGITAL_PINS];
+}
+
 extern "C" {
 #if ( UART_CHANNEL == 0 )
 	#include "Config_UART0.h"
@@ -1623,12 +1629,18 @@ void HardwareSerial::Set_Config(uint16_t config )
  *********************************************************************************************************************/
 void HardwareSerial::Set_SerialPort(uint8_t txd_pin,uint8_t rxd_pin)
 {
-    PinTableType* p;
-    PinTableType pin_tbl;
-    p = (PinTableType*)&pin_tbl;
+    //PinTableType* p;
+    //PinTableType pin_tbl;
+    //p = (PinTableType*)&pin_tbl;
+
+
+    const PinTableType ** pp;
+	PinTableType * p;
 
     /* Set RxD pin */
-    getPinTable(rxd_pin,p);
+    //getPinTable(rxd_pin,p);
+	pp = &pinTablelist[rxd_pin];
+	p = (PinTableType *)*pp;
     /* Set PM Register for Input */
     *p->portModeRegisterAddr |=  (unsigned long)(0x1 << p->bit);
 
@@ -1653,7 +1665,9 @@ void HardwareSerial::Set_SerialPort(uint8_t txd_pin,uint8_t rxd_pin)
     }
 
     /* Set TxD pin */
-    getPinTable(txd_pin,p);
+    //getPinTable(txd_pin,p);
+    pp = &pinTablelist[txd_pin];
+    p = (PinTableType *)*pp;
     /* Set PMCE Register t */
     if (0!=p->pmce){
       *p->portModeControlERegisterAddr &= (unsigned long)~(p->pmce);

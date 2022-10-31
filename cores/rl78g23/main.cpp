@@ -98,6 +98,8 @@ int main(void)
 	R_Config_WDT_Start();
 #endif
 
+	setPowerManagementMode(PM_NORMAL_MODE);
+
 	SOE0 &= 0xf3;
 	SO0 |= 0x08;
 

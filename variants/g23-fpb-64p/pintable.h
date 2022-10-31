@@ -71,7 +71,7 @@ typedef struct {
 	/* Add for G23 */
 } PinTableType;
 
-
+#if 0
 extern const uint8_t digital_pin[NUM_DIGITAL_PINS] __attribute__((weak));
 const uint8_t digital_pin[NUM_DIGITAL_PINS] = {
 		DIGITAL_PIN_0,DIGITAL_PIN_1,DIGITAL_PIN_2,DIGITAL_PIN_3,DIGITAL_PIN_4,
@@ -255,7 +255,7 @@ const uint8_t pin_pom[NUM_DIGITAL_PINS] = {
 };
 
 void getPinTable(uint8_t pin,PinTableType *pp);
-
+#endif
 #ifdef __cplusplus
 };
 #endif

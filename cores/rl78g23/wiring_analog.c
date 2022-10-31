@@ -33,6 +33,9 @@
 #include "pintable.h"
 #include "r_smc_entry.h"
 
+
+extern const PinTableType * pinTablelist[NUM_DIGITAL_PINS];
+
 extern uint8_t g_adc_int_flg;
 static uint8_t g_u8AnalogReference = DEFAULT;
 static uint8_t g_u8SwPwmTicksCount = 0;
@@ -759,11 +762,16 @@ static void _analogPinRead (uint8_t pin)
 		{
 	if (g_u8AnalogReadAvailableTable[pin] == false) {
 		// ピンモードをAnalogモードに変更
-		PinTableType *p;
-		PinTableType pin_tbl;
-		p = (PinTableType*)&pin_tbl;
+		//PinTableType *p;
+		//PinTableType pin_tbl;
+		//p = (PinTableType*)&pin_tbl;
+        //getPinTable(pin,p);
 
-		getPinTable(pin,p);
+		PinTableType ** pp;
+		PinTableType * p;
+		pp = &pinTablelist[pin];
+		p = (PinTableType *)*pp;
+
 		if (0!=p->pmca)
 		{
 			pinMode(pin, INPUT);

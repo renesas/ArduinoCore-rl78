@@ -37,6 +37,7 @@
 #include "pintable.h"
 extern bool g_u8AnalogWriteAvailableTable[NUM_DIGITAL_PINS];
 extern volatile SwPwm g_SwPwm[NUM_SWPWM_PINS];
+extern const PinTableType * pinTablelist[NUM_DIGITAL_PINS];
 
 /**********************************************************************************************************************
  * Function Name: pintable setting
@@ -45,6 +46,7 @@ extern volatile SwPwm g_SwPwm[NUM_SWPWM_PINS];
  *              : pp   - pin table
  * Return Value : -
  *********************************************************************************************************************/
+#if 0
 void getPinTable(uint8_t pin,PinTableType *pp)
 {
 	pp->mask                         = pin_mask[pin];
@@ -70,7 +72,7 @@ void getPinTable(uint8_t pin,PinTableType *pp)
 	pp->portOutCurControlRegisterAddr= getPortOutCurControlRegisterAddr();
 	pp->portDigInputDisRegisterAddr  = getPortDigInputDisRegisterAddr(digital_pin[pin]);
 }
-
+#endif
 /**
  * PWM STOP~
  *
@@ -192,11 +194,14 @@ void pinMode(uint8_t pin, uint8_t u8Mode)
 	}
 #else /*__RL78__*/
 	if (pin < NUM_DIGITAL_PINS) {
-		PinTableType *p;
-		PinTableType pin_tbl;
-		p = (PinTableType*)&pin_tbl;
+		//PinTableType pin_tbl;
+		//p = (PinTableType*)&pin_tbl;
+		//getPinTable(pin,p);
 
-		getPinTable(pin,p);
+        PinTableType **pp;
+		PinTableType *p;
+        pp = &pinTablelist[pin];
+        p = (PinTableType *)*pp;
 
 #ifdef PMPUPIMPOM_CHECK_ENABLE
 		if (0 != p->pm){
@@ -498,9 +503,11 @@ static void turnOffPWM(uint8_t pin)
  *********************************************************************************************************************/
 void digitalWrite(uint8_t pin, uint8_t val)
 {
-	PinTableType* p;
-	PinTableType pin_tbl;
-	p =(PinTableType*)&pin_tbl;
+#if 0
+    PinTableType* p;
+    PinTableType pin_tbl;
+    p =(PinTableType*)&pin_tbl;
+#endif
 
 #ifndef __RL78__
 	uint8_t timer = digitalPinToTimer(pin);
@@ -527,6 +534,7 @@ void digitalWrite(uint8_t pin, uint8_t val)
 
 	SREG = oldSREG;
 #else /*__RL78__*/
+#if 0
 	if (pin < NUM_DIGITAL_PINS) {
 		getPinTable(pin,p);
 		if (*p->portModeRegisterAddr & p->mask) {
@@ -565,6 +573,38 @@ void digitalWrite(uint8_t pin, uint8_t val)
 #endif
 		}
 	}
+#else
+    const PinTableType ** pp;
+    PinTableType * p;
+	uint8_t port;
+	if (pin < NUM_DIGITAL_PINS) {
+
+	    pp = &pinTablelist[pin];
+        p = (PinTableType *)*pp;
+
+#if 0
+        if (*p->portModeRegisterAddr & p->mask)
+        {
+                /* When Input Mode */
+            if (val == LOW) {
+                *p->portPullUpRegisterAddr &= ~p->mask;     /* Disable Pullup Reg */
+            } else {
+                *p->portPullUpRegisterAddr |= p->mask;      /* Enable Pullup Reg */
+            }
+        }
+        else
+#endif
+
+        {
+            /* When Output Mode  */
+            if (val == LOW) {
+                *p->portRegisterAddr &= ~p->mask;       /* Write "0" to Port */
+            } else {
+                *p->portRegisterAddr |= p->mask;        /* Write "1" to Port */
+            }
+        }
+    }
+#endif
 #endif /*__RL78__*/
 }
 
@@ -593,10 +633,16 @@ int digitalRead(uint8_t pin)
 #if 1
 	int	s16Value;
 	if (pin < NUM_DIGITAL_PINS) {
-		PinTableType* p;
-		PinTableType pin_tbl;
-		p =(PinTableType*)&pin_tbl;
-		getPinTable(pin,p);
+		//PinTableType* p;
+		//PinTableType pin_tbl;
+		//p =(PinTableType*)&pin_tbl;
+		//getPinTable(pin,p);
+
+		PinTableType ** pp;
+		PinTableType * p;
+		pp = &pinTablelist[pin];
+		p = (PinTableType *)*pp;
+
 		if (*p->portRegisterAddr & p->mask) {
 #if 0
 			__asm __volatile(
@@ -673,11 +719,16 @@ void DisableDigitalInput(uint8_t pin)
 {
 
 	if (pin < NUM_DIGITAL_PINS) {
-		PinTableType *p;
-		PinTableType pin_tbl;
-		p = (PinTableType*)&pin_tbl;
+		//PinTableType *p;
+		//PinTableType pin_tbl;
+		//p = (PinTableType*)&pin_tbl;
+        //getPinTable(pin,p);
 
-		getPinTable(pin,p);
+		PinTableType ** pp;
+		PinTableType * p;
+		pp = &pinTablelist[pin];
+		p = (PinTableType *)*pp;
+
 		if (0 != p->pdidis){	/* can be changed */
 			*p->portDigInputDisRegisterAddr |= (unsigned long)(0x1 << p->bit);	/* Input disable */
 		}
@@ -694,11 +745,16 @@ void EnableDigitalInput(uint8_t pin)
 {
 
 	if (pin < NUM_DIGITAL_PINS) {
-		PinTableType *p;
-		PinTableType pin_tbl;
-		p = (PinTableType*)&pin_tbl;
+		//PinTableType *p;
+		//PinTableType pin_tbl;
+		//p = (PinTableType*)&pin_tbl;
+        //getPinTable(pin,p);
 
-		getPinTable(pin,p);
+		PinTableType ** pp;
+		PinTableType * p;
+		pp = &pinTablelist[pin];
+		p = (PinTableType *)*pp;
+
 		if (0 != p->pdidis){	/* can be changed */
 			*p->portDigInputDisRegisterAddr &= (unsigned long)~(0x1 << p->bit);	/* set Input enable */
 		}

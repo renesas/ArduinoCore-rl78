@@ -69,15 +69,16 @@ void R_Systeminit(void)
     PRR0 = 0x00U;    /* release IICA, ADC, TAU and SAU module */
     PRR1 = 0x00U;    /* release DAC, SMS, COMP, ITL, REMC, CTSU module */
     /* Set peripheral settings */
-    R_SAU0_Create();
-    R_SAU1_Create();
-    R_TAU0_Create();
-    R_ITL_Create();
+    SAU0EN = 1U;    /* supplies input clock */    /* R_SAU0_Create(); */
+    SAU1EN = 1U;    /* supplies input clock */    /* R_SAU1_Create(); */
+    TAU0EN = 1U;    /* start TAU0 clock */        /* R_TAU0_Create(); */
+    TML32EN = 1U;    /* start 32-bits IT clock */ /* R_ITL_Create();  */
     R_Config_ADC_Create();
-    R_Config_IICA0_Create();
-    R_Config_IICA1_Create();
-    R_Config_WDT_Create();
-//KAD    /* The RTC initializes when using the function.
+    /* R_Config_IICA0_Create(); */
+    /* R_Config_IICA1_Create(); */
+    /* R_Config_WDT_Create(); */
+
+    /* The RTC initializes when using the function. */
     R_Config_RTC_Create();
-//KAD     */
+
 }
