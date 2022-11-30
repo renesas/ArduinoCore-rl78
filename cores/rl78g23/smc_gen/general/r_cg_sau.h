@@ -319,8 +319,8 @@ Typedef definitions
 Global functions
 ***********************************************************************************************************************/
 /* Start user code for function. Do not edit comment generated here */
-
-#warning FIXME: Instead of missing `r_cg_serial_csi.h`, define macros for `SPI` here.
+// 20220928 temporary removal
+// #warning FIXME: Instead of missing `r_cg_serial_csi.h`, define macros for `SPI` here.
 
 #define _0000_SPI_STATUS_CLEAR         (0x0000U)
 #define _8000_SPI_STATUS_SENDEND       (0x8000U)

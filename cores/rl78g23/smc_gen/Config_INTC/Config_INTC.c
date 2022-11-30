@@ -295,7 +295,7 @@ void R_Config_INTC_INTP11_Stop(void)
 }
 
 /* Start user code for adding. Do not edit comment generated here */
-
+// mod 2022/10/17 fit to RL78/G23 by KAD
 void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
 {
     switch (interruptNum) {
@@ -303,7 +303,169 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_0;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no0 = 0U;
+            EGN0_bit.no0 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no0 = 1U;
+            EGN0_bit.no0 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no0 = 1U;
+            EGN0_bit.no0 = 1U;
+        }
+        else{
+            EGP0_bit.no0 = 0U;
+            EGN0_bit.no0 = 0U;
+        }
+        break;
+    case 1:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_1;
+        value.modeNum = mode;
+        //  割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no1 = 0U;
+            EGN0_bit.no1 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no1 = 1U;
+            EGN0_bit.no1 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no1 = 1U;
+            EGN0_bit.no1 = 1U;
+        }
+        else{
+            EGP0_bit.no1 = 0U;
+            EGN0_bit.no1 = 0U;
+        }
+        break;
+    case 2:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_2;
+        value.modeNum = mode;
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no2 = 0U;
+            EGN0_bit.no2 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no2 = 1U;
+            EGN0_bit.no2 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no2 = 1U;
+            EGN0_bit.no2 = 1U;
+        }
+        else{
+            EGP0_bit.no2 = 0U;
+            EGN0_bit.no2 = 0U;
+        }
+        break;
+    case 3:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_3;
+        value.modeNum = mode;
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no3 = 0U;
+            EGN0_bit.no3 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no3 = 1U;
+            EGN0_bit.no3 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no3 = 1U;
+            EGN0_bit.no3 = 1U;
+        }
+        else{
+            EGP0_bit.no3 = 0U;
+            EGN0_bit.no3 = 0U;
+        }
+        break;
+    case 4:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_4;
+        value.modeNum = mode;
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no4 = 0U;
+            EGN0_bit.no4 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no4 = 1U;
+            EGN0_bit.no4 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no4 = 1U;
+            EGN0_bit.no4 = 1U;
+        }
+        else{
+            EGP0_bit.no4 = 0U;
+            EGN0_bit.no4 = 0U;
+        }
+        break;
+    case 5:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_5;
+        value.modeNum = mode;
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no5 = 0U;
+            EGN0_bit.no5 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no5 = 1U;
+            EGN0_bit.no5 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no5 = 1U;
+            EGN0_bit.no5 = 1U;
+        }
+        else{
+            EGP0_bit.no5 = 0U;
+            EGN0_bit.no5 = 0U;
+        }
+        break;
+
+    case 6:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_6;
+        value.modeNum = mode;
+        // 割り込みモードの設定
+        if (value.modeNum == FALLING) {
+            EGP0_bit.no6 = 0U;
+            EGN0_bit.no6 = 1U;
+        }
+        else if (value.modeNum == RISING) {
+            EGP0_bit.no6 = 1U;
+            EGN0_bit.no6 = 0U;
+            }
+        else if (value.modeNum == CHANGE){
+            EGP0_bit.no6 = 1U;
+            EGN0_bit.no6 = 1U;
+        }
+        else{
+            EGP0_bit.no6 = 0U;
+            EGN0_bit.no6 = 0U;
+        }
+        break;
+    }
+}
+
+/*
+void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
+{
+    switch (interruptNum) {
+    case 0:
+        value.intNum = interruptNum;
+        value.pinNum = EXTERNAL_INTERRUPT_0;
+        value.modeNum = mode;
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP1_bit.no3 = 0U;
             EGN1_bit.no3 = 1U;
@@ -325,7 +487,7 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_1;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        //  割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP0_bit.no4 = 0U;
             EGN0_bit.no4 = 1U;
@@ -347,7 +509,7 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_2;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP1_bit.no2 = 0U;
             EGN1_bit.no2 = 1U;
@@ -369,7 +531,7 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_3;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP0_bit.no2 = 0U;
             EGN0_bit.no2 = 1U;
@@ -391,7 +553,7 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_4;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP0_bit.no1 = 0U;
             EGN0_bit.no1 = 1U;
@@ -413,7 +575,7 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_5;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP0_bit.no3 = 0U;
             EGN0_bit.no3 = 1U;
@@ -431,12 +593,11 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
             EGN0_bit.no3 = 0U;
         }
         break;
-
     case 6:
         value.intNum = interruptNum;
         value.pinNum = EXTERNAL_INTERRUPT_6;
         value.modeNum = mode;
-        /* 割り込みモードの設定 */
+        // 割り込みモードの設定
         if (value.modeNum == FALLING) {
             EGP0_bit.no0 = 0U;
             EGN0_bit.no0 = 1U;
@@ -456,7 +617,33 @@ void R_Config_INTC_Create_Mode(uint8_t interruptNum, int mode)
         break;
     }
 }
+*/
 
+// mod 2022/10/17 fit to RL78/G23 by KAD
+void R_Config_INTC_INTP_Start(void){
+    if(value.pinNum == EXTERNAL_INTERRUPT_0){
+        R_Config_INTC_INTP0_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_1){
+        R_Config_INTC_INTP1_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_2){
+        R_Config_INTC_INTP2_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_3){
+        R_Config_INTC_INTP3_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_4){
+        R_Config_INTC_INTP4_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_5){
+        R_Config_INTC_INTP10_Start();
+    }
+    else if (value.pinNum == EXTERNAL_INTERRUPT_6){
+        R_Config_INTC_INTP11_Start();
+    }
+}
+/*
 void R_Config_INTC_INTP_Start(void){
     if(value.pinNum == EXTERNAL_INTERRUPT_0){
         R_Config_INTC_INTP11_Start();
@@ -477,33 +664,35 @@ void R_Config_INTC_INTP_Start(void){
         R_Config_INTC_INTP3_Start();
     }
     else if (value.pinNum == EXTERNAL_INTERRUPT_6){
-            R_Config_INTC_INTP0_Start();
-        }
+        R_Config_INTC_INTP0_Start();
+    }
 }
+*/
 
 void R_Config_INTC_INTP_Stop(uint8_t interruptNum){
     switch (interruptNum) {
         case 0:
-            R_Config_INTC_INTP11_Stop();
+            R_Config_INTC_INTP0_Stop();
             break;
         case 1:
-            R_Config_INTC_INTP4_Stop();
-            break;
-        case 2:
-            R_Config_INTC_INTP10_Stop();
-            break;
-        case 3:
-            R_Config_INTC_INTP2_Stop();
-            break;
-        case 4:
             R_Config_INTC_INTP1_Stop();
             break;
-        case 5:
+
+        case 2:
+            R_Config_INTC_INTP2_Stop();
+            break;
+        case 3:
             R_Config_INTC_INTP3_Stop();
             break;
+        case 4:
+            R_Config_INTC_INTP4_Stop();
+            break;
+        case 5:
+            R_Config_INTC_INTP10_Stop();
+            break;
         case 6:
-			   R_Config_INTC_INTP0_Stop();
-			   break;
+           R_Config_INTC_INTP11_Stop();
+           break;
     }
 }
 /* End user code. Do not edit comment generated here */

@@ -6,8 +6,8 @@ menu.cpu=Processor
 g23-fpb-64p.name=RL78-G23 Fast Prototyping Board 64Pin
 g23-fpb-64p.upload.tool=rl78flash
 g23-fpb-64p.upload.protocol=rl78
-g23-fpb-64p.upload.maximum_size=262144
-g23-fpb-64p.upload.maximum_data_size=20480
+g23-fpb-64p.upload.maximum_size=131072
+g23-fpb-64p.upload.maximum_data_size=16384
 g23-fpb-64p.upload.speed=115200
 
 g23-fpb-64p.bootloader.tool=

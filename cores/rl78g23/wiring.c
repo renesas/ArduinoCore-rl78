@@ -236,7 +236,7 @@ void delay(unsigned long ms)
 	}
 #else /*__RL78__*/
 
-	volatile lms = ms;
+	volatile int lms = ms;
     g_delay_cnt_flg = 1U;
     g_u32delay_timer = 0U;
     if (g_u8PowerManagementMode == PM_NORMAL_MODE)

@@ -69,8 +69,8 @@ void R_Config_INTC_Create_UserInit(void)
 void r_Config_INTC_intp0_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp0_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[6] != NULL) {
-        (*g_afInterruptFuncTable[6])();
+    if (g_afInterruptFuncTable[0] != NULL) {
+        (*g_afInterruptFuncTable[0])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -85,8 +85,13 @@ void r_Config_INTC_intp0_interrupt(void)
 void r_Config_INTC_intp1_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp1_interrupt. Do not edit comment generated here */
+/* 20221003
     if (g_afInterruptFuncTable[4] != NULL) {
         (*g_afInterruptFuncTable[4])();
+    }
+    */
+    if (g_afInterruptFuncTable[1] != NULL) {
+        (*g_afInterruptFuncTable[1])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -100,8 +105,13 @@ void r_Config_INTC_intp1_interrupt(void)
 void r_Config_INTC_intp2_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp2_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[3] != NULL) {
+/* 20221003
+	if (g_afInterruptFuncTable[3] != NULL) {
         (*g_afInterruptFuncTable[3])();
+    }
+ */
+    if (g_afInterruptFuncTable[2] != NULL) {
+        (*g_afInterruptFuncTable[2])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -115,8 +125,8 @@ void r_Config_INTC_intp2_interrupt(void)
 void r_Config_INTC_intp3_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp3_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[5] != NULL) {
-        (*g_afInterruptFuncTable[5])();
+    if (g_afInterruptFuncTable[3] != NULL) {
+        (*g_afInterruptFuncTable[3])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -130,8 +140,8 @@ void r_Config_INTC_intp3_interrupt(void)
 void r_Config_INTC_intp4_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp4_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[1] != NULL) {
-        (*g_afInterruptFuncTable[1])();
+    if (g_afInterruptFuncTable[4] != NULL) {
+        (*g_afInterruptFuncTable[4])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -145,8 +155,8 @@ void r_Config_INTC_intp4_interrupt(void)
 void r_Config_INTC_intp10_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp10_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[2] != NULL) {
-        (*g_afInterruptFuncTable[2])();
+    if (g_afInterruptFuncTable[5] != NULL) {
+        (*g_afInterruptFuncTable[5])();
     }
     /* End user code. Do not edit comment generated here */
 }
@@ -159,8 +169,8 @@ void r_Config_INTC_intp10_interrupt(void)
 void r_Config_INTC_intp11_interrupt(void)
 {
     /* Start user code for r_Config_INTC_intp11_interrupt. Do not edit comment generated here */
-    if (g_afInterruptFuncTable[0] != NULL) {
-        (*g_afInterruptFuncTable[0])();
+    if (g_afInterruptFuncTable[6] != NULL) {
+        (*g_afInterruptFuncTable[6])();
     }
     /* End user code. Do not edit comment generated here */
 }

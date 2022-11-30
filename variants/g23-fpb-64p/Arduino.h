@@ -723,4 +723,14 @@ long map(long, long, long, long, long);
 #endif
 #endif /* IIC */
 
+#ifdef __RL78__
+#define ISP_LEVEL_3 (3)
+#define ISP_LEVEL_2 (2)
+#define ISP_LEVEL_1 (1)
+#define ISP_LEVEL_0 (0)
+
+#define GET_PSW_ISP()  (__builtin_rl78_getpswisp ())
+#endif
+
+
 #endif /* ARDUINO_H */

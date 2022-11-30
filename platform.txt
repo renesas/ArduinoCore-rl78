@@ -4,7 +4,7 @@
 # For more info:
 # LLVM Prototype Package for Tools Test
 name=Renesas RL78/G23
-version=1.2.1
+version=1.3.0
 
 # --------------------- 
 # AVR compile variables
@@ -51,7 +51,8 @@ compiler.elf2hex.flags=
 # LLVM print Size variable
 #------------------------------------#
 compiler.size.cmd=llvm-size
-compiler.size.flags=--format=berkeley -x --totals --common --version
+compiler.size.flags=--format=sysv
+
 #------------------------------------#
 # LLVM include paths
 #------------------------------------#
@@ -113,15 +114,28 @@ inc50="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/mmc_driver/mmc/rl
 inc51="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat" 
 inc52="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat/include" 
 inc53="-I{runtime.platform.path}/libraries/SD/src/Tfat_Drivers/tfat/src" 
+inc54="-I{runtime.platform.path}/libraries/SoftwareSerial/src" 
+inc55="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_ITL013" 
+inc56="-I{runtime.platform.path}/cores/rl78g23/smc_gen/Config_TAU0_7_MSTimer2" 
+inc57="-I{runtime.platform.path}/libraries/Firmata/src" 
+inc58="-I{runtime.platform.path}/libraries/Ethernet3/src" 
+inc59="-I{runtime.platform.path}/libraries/Ethernet3/src/utility" 
+inc60="-I{runtime.platform.path}/libraries/LiquidCrystal/src" 
+inc61="-I{runtime.platform.path}/libraries/Servo/Utility"
+inc62="-I{runtime.platform.path}/libraries/Wire/src"
+inc63="-I{runtime.platform.path}/libraries/Wire/src/Utility"
+inc64="-I{runtime.platform.path}/libraries/RTC/utility"
 
 incA={inc0} {inc1} {inc2} {inc3} {inc4} {inc5} {inc6} {inc7} {inc8} {inc9} 
 incB={inc10} {inc11} {inc12} {inc13} {inc14} {inc15} {inc16} {inc17} {inc18} {inc19} 
 incC={inc20} {inc21} {inc22} {inc23} {inc24} {inc25} {inc26} {inc27} {inc28} {inc29} 
 incD={inc30} {inc31} {inc32} {inc33} {inc34} {inc35} {inc36} {inc37} {inc38} {inc39} 
 incE={inc40} {inc41} {inc42} {inc43} {inc44} {inc45} {inc46} {inc47} {inc48} {inc49} 
-incF={inc50} {inc51} {inc52} {inc53} 
+incF={inc50} {inc51} {inc52} {inc53} {inc54} {inc55} {inc56} {inc57} {inc58} {inc59} 
+incG={inc60} {inc61} {inc62} {inc63} {inc64} 
+incH=
 
-compiler.includes={incA} {incB} {incC} {incD} {incE} {incF}
+compiler.includes={incA} {incB} {incC} {incD} {incE} {incF} {incG} {incH}
 
 # this can be overriden in boards.txt
 build.extra_flags=
@@ -171,11 +185,8 @@ recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf
 # Compute size
 # --------------------
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" {compiler.size.flags} "{build.path}/{build.project_name}.elf"
-
-recipe.size.regex=^(?:\.text|\.data|\.bootloader)\s+([0-9]+).*
-recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
-recipe.size.regex.eeprom=^(?:\.eeprom)\s+([0-9]+).*
-
+recipe.size.regex=^(?:\.vec |\.vects |\.callt0 |\.option_byte |\.security_id |\.lowtext |\.init |\.fini |\.rodata |\.text |\.textf |\.frodata |\.eh_frame_hdr |\.eh_frame |\.data |\.dataf |\.sdata |\.saddr )\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data |\.dataf |\.sdata |\.saddr |\.sbss |\.bss |\.bssf |\.stack )\s+([0-9]+).*
 
 # --------------------
 # SAM3 Uploader tools

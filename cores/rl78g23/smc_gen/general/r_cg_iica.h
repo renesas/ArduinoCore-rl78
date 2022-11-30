@@ -167,8 +167,8 @@ Global functions
 #define I2C_CLOCK_STANDARD               ( 100000UL)
 #define I2C_CLOCK_FAST                   ( 400000UL)
 #define I2C_CLOCK_FAST_PLUS              (1000000UL)
-
-#warning FIXME: Disable I2C fast mode plus clock 1MHz: The setting is a bit differ from actual 1MHz frequency.
+// 20220928 temporary removal
+// #warning FIXME: Disable I2C fast mode plus clock 1MHz: The setting is a bit differ from actual 1MHz frequency.
 #define DISABLE_CLOCK_FAST_PLUS
 
 /* End user code. Do not edit comment generated here */

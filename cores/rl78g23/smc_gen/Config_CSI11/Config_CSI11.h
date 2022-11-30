@@ -61,5 +61,6 @@ void R_Config_CSI11_SetBitOrder(uint8_t bitOrder);
 void R_Config_CSI11_SetDataMode(uint8_t dataMode);
 void R_Config_CSI11_SetClockDivider(uint16_t clockDiv);
 void R_Config_CSI11_SetClock(uint32_t clock);
+void r_Config_CSI11_interrupt(void);
 /* End user code. Do not edit comment generated here */
 #endif

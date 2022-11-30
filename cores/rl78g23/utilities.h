@@ -26,6 +26,8 @@ extern uint8_t g_u8PowerManagementMode;
 extern uint8_t g_u8OperationClockMode;
 extern fITInterruptFunc_t	g_fITInterruptFunc;
 
+extern fInterruptFunc_t	g_fMicroInterruptFunc;
+
 uint16_t getVersion();
 uint8_t getPowerManagementMode();
 #ifdef __cplusplus
@@ -37,7 +39,9 @@ uint8_t getOperationClockMode();
 void setOperationClockMode(uint8_t u8ClockMode);
 void attachIntervalTimerHandler(void (*fFunction)(unsigned long u32Milles));
 void detachIntervalTimerHandler();
+
 void attachMicroIntervalTimerHandler(void (*fFunction)(void), uint16_t interval);
+
 void attachClockIntervalTimerHandler(void (*fFunction)(void), uint16_t interval);
 void detachMicroIntervalTimerHandler();
 void detachClockIntervalTimerHandler();
@@ -47,7 +51,7 @@ void outputClock(uint8_t u8Pin, uint32_t u32Frequency);
 int getTemperature(uint8_t u8Mode);
 void softwareReset(void);
 uint8_t getResetFlag(void);
-void execCyclicHandler();
+// void execCyclicHandler(void);
 
 #ifdef __cplusplus
 extern "C" {
@@ -61,6 +65,8 @@ void _turnOffPwmPin(uint8_t u8Pin);
 void _softwarePWM(void);
 void enterPowerManagementMode(unsigned long u32ms);
 void _readResetFlag();
+// 2022/10/11
+void execCyclicHandler(void);
 #ifdef __cplusplus
 }
 #endif

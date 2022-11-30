@@ -252,7 +252,8 @@ void r_Config_TAU0_7_Mesure_Signal_interrupt(void) __attribute__ ((interrupt));
 void r_Config_TAU0_7_Square_Wave_interrupt(void) __attribute__ ((interrupt));
 void INT_TM07(void) __attribute__ ((interrupt));
 /* 1118 nhu add */
-
+// 20221006 KAD
+void r_Config_TAU0_7_MSTimer2_interrupt(void) __attribute__ ((interrupt));
 /*
  * INT_P6 (0x4A)
  */

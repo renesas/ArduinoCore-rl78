@@ -38,6 +38,8 @@ Includes
 #include "Config_ITL000.h"
 #include "Config_ITL001.h"
 #include "Config_ITL012.h"
+// Add 20221005
+#include "Config_ITL013.h"
 /* Start user code for include. Do not edit comment generated here */
 /* End user code. Do not edit comment generated here */
 #include "r_cg_userdefine.h"
@@ -66,10 +68,16 @@ void r_itl_interrupt(void)
         ITLS0 &= (uint16_t)~_02_ITL_CHANNEL1_COUNT_MATCH_DETECTE;
         R_Config_ITL001_Callback_Shared_Interrupt();
     }
-	    if (_04_ITL_CHANNEL2_COUNT_MATCH_DETECTE == (ITLS0 & _04_ITL_CHANNEL2_COUNT_MATCH_DETECTE))
+    if (_04_ITL_CHANNEL2_COUNT_MATCH_DETECTE == (ITLS0 & _04_ITL_CHANNEL2_COUNT_MATCH_DETECTE))
     {
         ITLS0 &= (uint16_t)~_04_ITL_CHANNEL2_COUNT_MATCH_DETECTE;
         R_Config_ITL012_Callback_Shared_Interrupt();
+    }
+// Add 20221005
+    if (_08_ITL_CHANNEL3_COUNT_MATCH_DETECTE == (ITLS0 & _08_ITL_CHANNEL3_COUNT_MATCH_DETECTE))
+    {
+        ITLS0 &= (uint16_t)~_08_ITL_CHANNEL3_COUNT_MATCH_DETECTE;
+        R_Config_ITL013_Callback_Shared_Interrupt();
     }
 }
 

@@ -221,8 +221,8 @@ void R_Config_CSI11_SetDataMode(uint8_t dataMode) {
 
     ST0     |= _0008_SAU_CH3_STOP_TRG_ON;                       /* Stop channel 3 */
     SOE0    &= (uint16_t)~_0008_SAU_CH3_OUTPUT_ENABLE;          /* disable CSI11 output */
-
-    #warning XXX: Check whether this register setting mapping is correct.
+// 20220928 temporary removal
+//    #warning XXX: Check whether this register setting mapping is correct.
     /*
      * This mapping is obeying the base code.
      * Fix the `SPI_MODEx` macros together.

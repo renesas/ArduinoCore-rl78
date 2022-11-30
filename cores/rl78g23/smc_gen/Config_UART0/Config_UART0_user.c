@@ -76,9 +76,14 @@ void R_Config_UART0_Create_UserInit(void)
 static void r_Config_UART0_callback_sendend(void)
 {
     /* Start user code for r_Config_UART0_callback_sendend. Do not edit comment generated here */
-	Set_Char_Serial_from_buf(0);
-	(*uart_transmit_callback_table[0])();
-	/* End user code. Do not edit comment generated here */
+    Set_Char_Serial_from_buf(0);
+//    (*uart_transmit_callback_table[0])();
+    if(0 != uart_transmit_callback_table[0])
+    {
+        (*uart_transmit_callback_table[0])();
+    }
+
+    /* End user code. Do not edit comment generated here */
 }
 
 /***********************************************************************************************************************
@@ -90,9 +95,14 @@ static void r_Config_UART0_callback_sendend(void)
 static void r_Config_UART0_callback_receiveend(void)
 {
     /* Start user code for r_Config_UART0_callback_receiveend. Do not edit comment generated here */
-	Set_Char_Serial_to_buf(0);
-	(*uart_receive_callback_table[0])();
-	/* End user code. Do not edit comment generated here */
+    Set_Char_Serial_to_buf(0);
+//    (*uart_receive_callback_table[0])();
+    if(0 != uart_receive_callback_table[0])
+    {
+        (*uart_receive_callback_table[0])();
+    }
+
+    /* End user code. Do not edit comment generated here */
 }
 
 /***********************************************************************************************************************

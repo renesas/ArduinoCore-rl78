@@ -17,20 +17,25 @@ extern uint8_t g_u8ResetFlag;
 extern uint8_t g_u8PowerManagementMode;
 extern uint8_t g_u8OperationClockMode;
 extern volatile unsigned long g_u32delay_timer;
-extern volatile unsigned long g_timer05_overflow_count;
+// extern volatile unsigned long g_timer05_overflow_count;
 extern uint8_t g_delay_cnt_flg;
 extern uint8_t g_delay_cnt_micros_flg;
 extern volatile unsigned long g_u32delay_micros_timer;
 
-extern uint8_t g_u8ADUL;
-extern uint8_t g_u8ADLL;
+// extern uint8_t g_u8ADUL;
+// extern uint8_t g_u8ADLL;
 extern uint16_t g_u16ADUL;
 extern uint16_t g_u16ADLL;
 
-void (*INT_TM_HOOK)() ;
+// Add 20221005
+volatile unsigned long g_u32timer_periodic = 0u;	// ms周期処理用インターバルタイマ変数
+volatile unsigned long g_u32microtimer_periodic = 0u;	// us周期処理用インターバルタイマ変数
+
+// void (*INT_TM_HOOK)() ;
 
 extern "C" {
 #include "r_smc_entry.h"
+#include "Config_TAU0_7_MSTimer2.h"
 }
 
 
@@ -45,7 +50,22 @@ static struct {
 };
 fITInterruptFunc_t	g_fITInterruptFunc = NULL;	//!< ユーザー定義インターバルタイマハンドラ
 
+fInterruptFunc_t g_fMicroInterruptFunc = NULL;
 
+// 2022/10/07 comment out by KAD
+/*
+extern volatile unsigned long g_u32timer_periodic;
+
+static void PeriodicMillisIntervalFunc()
+{
+    if (g_u32timer_periodic > 0) {
+        if (g_fITInterruptFunc) {
+        	g_fITInterruptFunc(g_u32timer_periodic);
+        }
+        g_u32timer_periodic = 0;
+    }
+}
+*/
 
 #if !defined(G23_FPB)
 /**
@@ -157,8 +177,6 @@ void _startTimerChannel(uint8_t u8TimerChannel, uint16_t u16TimerMode, uint16_t 
 }
 #endif
 
-
-
 /**
  * タイマーアレイユニットの停止
  *
@@ -179,8 +197,6 @@ void _stopTAU0()
 		}
 	}
 }
-
-
 
 /**
  * タイマー周期の変更
@@ -224,7 +240,6 @@ void _modifyTimerPeriodic(uint8_t u8TimerChannel, uint16_t u16Interval)
 	}
 
 }
-
 
 /**
  * タイマーチャンネルの停止
@@ -286,7 +301,6 @@ void _stopTimerChannel(uint8_t u8TimerChannel)
 	}
 #endif
 }
-
 
 /**
  * Software Reset
@@ -365,7 +379,6 @@ uint8_t getPowerManagementMode()
 {
 	return g_u8PowerManagementMode;
 }
-
 
 /**
  * パワーマネージメントモードを設定します。
@@ -551,15 +564,16 @@ void setOperationClockMode(uint8_t u8ClockMode)
 #endif
 }
 /** @} group15 パワーマネージメント/クロック制御関数 */
-#endif /* USE_POWER_MANAGEMENT == 1
+#endif // USE_POWER_MANAGEMENT == 1
 
 
-/** ************************************************************************
- * @defgroup group16 割込みハンドラ/周期起動関数
- *
- * @{
- ***************************************************************************/
-/**
+// *************************************************************************
+// * @defgroup group16 割込みハンドラ/周期起動関数
+//  *
+//  * @{
+//  **************************************************************************
+
+/*
  * インターバル・タイマ割り込みハンドラ内から実行するコールバック関数を登録します。
  *
  * コールバック関数を登録すると1[ms]のインターバル・タイマ割り込み毎に登録した
@@ -579,12 +593,12 @@ void setOperationClockMode(uint8_t u8ClockMode)
  * bitSet()、 bitClear()、 bit()、 randomSeed()、 random()
  * - pinMode()関数と digitalWrite()関数は、 loop()関数内とコールバック関数内で同じピン
  * 番号を指定すると誤動作する可能性があります。
- ***************************************************************************/
+ ************************************************************************** */
+
 void attachIntervalTimerHandler(void (*fFunction)(unsigned long u32Milles))
 {
 	g_fITInterruptFunc = fFunction;
 }
-
 
 /**
  * インターバル・タイマ割り込みハンドラ内から実行するコールバック関数の登録を解除します。
@@ -657,6 +671,17 @@ void detachMicroIntervalTimerHandler()
 }
 #endif
 
+// Add 2022/10/07 KAD
+void attachMicroIntervalTimerHandler(void (*fFunction)(void), uint16_t interval)
+{
+	g_fMicroInterruptFunc = fFunction;
+
+    R_Config_TAU0_7_MSTimer2_Create();
+	R_Config_TAU0_7_MSTimer2_SetPeriod(interval);
+	R_Config_TAU0_7_MSTimer2_Start();
+}
+
+
 /**
  * 周期起動コールバック関数を登録します。
  *
@@ -703,6 +728,7 @@ void detachCyclicHandler(uint8_t u8HandlerNumber)
 }
 
 
+extern "C" {
 /// @cond
 /**
  * 周期起動コールバック関数を起動します。
@@ -711,7 +737,7 @@ void detachCyclicHandler(uint8_t u8HandlerNumber)
  *
  * @attention
  ***************************************************************************/
-void execCyclicHandler()
+void execCyclicHandler(void)
 {
 	int i;
 
@@ -730,6 +756,9 @@ void execCyclicHandler()
 	}
 }
 /// @endcond
+}
+
+
 /** @} group16 割込みハンドラ/周期起動関数 */
 
 #if !defined(G23_FPB)

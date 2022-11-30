@@ -77,7 +77,12 @@ static void r_Config_UART2_callback_sendend(void)
 {
     /* Start user code for r_Config_UART2_callback_sendend. Do not edit comment generated here */
 	Set_Char_Serial_from_buf(2);
-	(*uart_transmit_callback_table[2])();
+//	(*uart_transmit_callback_table[2])();
+    if(0 != uart_transmit_callback_table[2])
+    {
+        (*uart_transmit_callback_table[2])();
+    }
+
 	/* End user code. Do not edit comment generated here */
 }
 
@@ -91,7 +96,11 @@ static void r_Config_UART2_callback_receiveend(void)
 {
     /* Start user code for r_Config_UART2_callback_receiveend. Do not edit comment generated here */
 	Set_Char_Serial_to_buf(2);
-	(*uart_receive_callback_table[2])();
+//	(*uart_receive_callback_table[2])();
+    if(0 != uart_receive_callback_table[2])
+    {
+        (*uart_receive_callback_table[2])();
+    }
 	/* End user code. Do not edit comment generated here */
 }
 

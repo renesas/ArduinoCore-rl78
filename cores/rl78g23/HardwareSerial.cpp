@@ -38,6 +38,7 @@
 
 extern "C" {
 	uint32_t R_BSP_GetFclkFreqHz(void);
+	void Set_Char_Serial_from_buf(uint8_t chn);
 }
 
 #include "Arduino.h"
@@ -513,6 +514,9 @@ void serialEventRun(void)
   if (Serial3.available()) serialEvent3();
 #endif /* serialEvent3_implemented */
 }
+
+fInterruptFunc_t uart_receive_callback_table[3] __attribute__((weak));
+fInterruptFunc_t uart_transmit_callback_table[3] __attribute__((weak));
 
 // Constructors ////////////////////////////////////////////////////////////////
 
@@ -1147,11 +1151,14 @@ size_t HardwareSerial::UART_Send(uint8_t c)
 {
 	MD_STATUS err = MD_OK;
 	int i;
+	uint8_t isp;
 
 	/* buffer is none */
 	if (0 == _tx_buf_size){
 		return -1;
 	}
+
+	isp = GET_PSW_ISP();
 
 	noInterrupts();
 	if(_tx_buffer_tail == _tx_buffer_head){
@@ -1209,8 +1216,65 @@ size_t HardwareSerial::UART_Send(uint8_t c)
 		if(i == _tx_buffer_tail)
 		{
 			/* buffer over */
-			interrupts();
-			return -1;
+			if(ISP_LEVEL_3 == isp)
+			{
+				/* When called from main program(setup() or loop() */
+				interrupts();
+				while(i == _tx_buffer_tail)
+				{
+					;
+				}
+				noInterrupts();
+			}
+			else
+			{
+				/* When called from interuupt function (ex. callback routine for periodic processing */
+				switch (_urt_channel)
+				{
+					case 0:
+		#if ( UART_CHANNEL == 0 )
+						while((SSR00 & 0x20) != 0)/*BFF00*/
+						{
+							;
+						}
+					    STIF0 = 0;
+		#endif /* ( UART_CHANNEL == 0 ) */
+						break;
+					case 1:
+		#if ( UART1_CHANNEL == 1 )
+						while((SSR02 & 0x20) != 0)/*BFF00*/
+						{
+							;
+						}
+					    STIF1 = 0;
+		#endif /* ( UART1_CHANNEL == 1 ) */
+						break;
+					case 2:
+		#if ( UART2_CHANNEL == 2 )
+						while((SSR10 & 0x20) != 0)/*BFF00*/
+						{
+							;
+						}
+					    STIF2 = 0;
+		#endif /* ( UART2_CHANNEL == 2 ) */
+						break;
+					case 3:
+		#if ( UART3_CHANNEL == 3 )
+						while((SSR12 & 0x20) != 0)/*BFF00*/
+						{
+							;
+						}
+					    STIF3 = 0;
+		#endif /* ( UART3_CHANNEL == 3 ) */
+						break;
+				}
+			    Set_Char_Serial_from_buf(_urt_channel);
+			    if(0 != uart_transmit_callback_table[_urt_channel])
+			    {
+			        (*uart_transmit_callback_table[_urt_channel])();
+			    }
+			}
+//          return -1;
 		}
 		_tx_buffer[_tx_buffer_head] = c;
 		_tx_buffer_head = i;
@@ -1700,8 +1764,6 @@ void HardwareSerial::Set_SerialPort(uint8_t txd_pin,uint8_t rxd_pin)
     }
 }
 
-fInterruptFunc_t uart_receive_callback_table[3] __attribute__((weak));
-fInterruptFunc_t uart_transmit_callback_table[3] __attribute__((weak));
 
 void HardwareSerial::setReceiveCallback(void (*userFunc)(void))
 {

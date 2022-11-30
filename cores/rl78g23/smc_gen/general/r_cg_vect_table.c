@@ -289,9 +289,10 @@ const void *Vectors[] VECT_SECT = {
  */
 //    r_Config_TAU0_6_channel7_interrupt,
 /* 1118 nhu add */
-	r_Config_TAU0_7_Mesure_Signal_interrupt,
+//	r_Config_TAU0_7_Mesure_Signal_interrupt,
 /* 1118 nhu add */
-
+	// 20221006 KAD
+	r_Config_TAU0_7_MSTimer2_interrupt,
 
 /*
  * INT_P6 (0x4A)

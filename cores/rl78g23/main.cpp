@@ -24,10 +24,13 @@
 
 #if USE_SMART_CONFIGRATOR == 1
 extern "C" {
-	#include "r_smc_entry.h"
+    #include "r_smc_entry.h"
 }
 #endif
 
+extern "C" {
+    #include "Config_ITL013.h"
+}
 //#include <Wire.h>
 
 // Declared weak in Arduino.h to allow user redefinitions.
@@ -50,82 +53,88 @@ void setupUSB() { }
 int main(void)
 {
 /******************************************************/
-	interrupts();				/* Enable Interrupt */
+    interrupts();                /* Enable Interrupt */
 
     _readResetFlag();           /* Read causes of reset */
 
 /* Start Interval Timer */
-	R_Config_ITL000_Create();	/* Create 1ms Interval Timer */
-	R_Config_ITL000_Start();	/* Start 1ms Interval Timer */
-	R_ITL_Start_Interrupt();	/* Start ITL Interrupt */
+    R_Config_ITL000_Create();    /* Create 1ms Interval Timer */
+    R_Config_ITL000_Start();    /* Start 1ms Interval Timer */
+    R_ITL_Start_Interrupt();    /* Start ITL Interrupt */
 
-	/* Start RTC Timer */
+    /* Start RTC Timer */
     R_Config_RTC_Start();    /*//KAD Start RTC Timer */
+
+// Add 20221005 never call Create function
+//    R_Config_ITL013_Create();
+    R_Config_ITL013_SetCompareMatch(0x20, 0x0);
+    R_Config_ITL013_Start();
 
 /* Power Off unused Peripheral */
 /* SERIAL ARRAY UNIT (SAU) */
 #if !defined(UART_CHANNEL) & (UART1_CHANNEL == 0) & !defined(CSI_CHANNEL)
-	R_SAU0_Set_Reset();
-	R_SAU0_Set_PowerOff();
+    R_SAU0_Set_Reset();
+    R_SAU0_Set_PowerOff();
 #endif
 #if !defined(UART1_CHANNEL) || UART1_CHANNEL == 0
-	R_Config_UART1_Stop();
+    R_Config_UART1_Stop();
 #endif
 #if !defined(CSI_CHANNEL)
-	R_Config_CSI11_Stop();
+    R_Config_CSI11_Stop();
 #endif
 #if !defined(UART2_CHANNEL) || (UART2_CHANNEL == 0)
-	R_SAU1_Set_Reset();
-	R_SAU1_Set_PowerOff();
+    R_SAU1_Set_Reset();
+    R_SAU1_Set_PowerOff();
 #endif
 
 /* IICA UNIT(IICA*) */
 #if !defined(IIC_CHANNEL0) | (IIC_CHANNEL0!=0)
-	R_IICA0_Set_Reset();
-	R_IICA0_Set_PowerOff();
+    R_IICA0_Set_Reset();
+    R_IICA0_Set_PowerOff();
 #endif
 #if (IIC_CHANNEL1!=1)
-	R_IICA1_Set_Reset();
-	R_IICA1_Set_PowerOff();
+    R_IICA1_Set_Reset();
+    R_IICA1_Set_PowerOff();
 #endif
 
 /* RTC */
 #if !defined(RTC_ON) | (RTC_ON!=0)
-	R_RTC_Set_PowerOff();
+    R_RTC_Set_PowerOff();
 #endif
 
 #if WDT_EN==1
-	R_Config_WDT_Start();
+    R_Config_WDT_Start();
 #endif
 
-	setPowerManagementMode(PM_NORMAL_MODE);
+    setPowerManagementMode(PM_NORMAL_MODE);
 
-	SOE0 &= 0xf3;
-	SO0 |= 0x08;
+    SOE0 &= 0xf3;
+    SO0 |= 0x08;
 
 /******************************************************/
 
 #ifndef __RL78__
-	init();
+    init();
 #endif
 
 #ifndef __RL78__
-	initVariant();
+    initVariant();
 #endif
 
 #if defined(USBCON)
-	USBDevice.attach();
+    USBDevice.attach();
 #endif
-	
-	setup();
     
-	for (;;) {
-		loop();
+    setup();
+    
+    for (;;) {
+        loop();
 #ifdef __RL78__
+//        execCyclicHandler();
 #endif
-	}
+    }
         
-	return 0;
+    return 0;
 }
 
 #ifdef __RL78__
@@ -142,7 +151,7 @@ int main(void)
 
 void abort(void)
 {
-	for(;;);
+    for(;;);
 }
 
 void exit(int) __attribute__ ((weak, alias ("abort")));

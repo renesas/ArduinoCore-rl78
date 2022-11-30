@@ -325,7 +325,7 @@ void pinMode(uint8_t pin, uint8_t u8Mode)
 				*p->portPullUpRegisterAddr &= (unsigned long)~(0x1 << p->bit);		/* Disable Pullup Reg */
 			}
 			if (0 != p->pim){
-				*p->portInputModeRegisterAddr &= (unsigned long)~(0x1 << p->bit);	/* set CMOS Onput */
+				*p->portInputModeRegisterAddr &= (unsigned long)~(0x1 << p->bit);	/* set CMOS Input */
 			}
 			*p->portRegisterAddr &= (unsigned long)~(0x1 << p->bit);			/* clear Port */
 #else

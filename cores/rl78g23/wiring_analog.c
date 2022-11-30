@@ -38,7 +38,7 @@ extern const PinTableType * pinTablelist[NUM_DIGITAL_PINS];
 
 extern uint8_t g_adc_int_flg;
 static uint8_t g_u8AnalogReference = DEFAULT;
-static uint8_t g_u8SwPwmTicksCount = 0;
+// static uint8_t g_u8SwPwmTicksCount = 0;
 //uint8_t g_u8ADUL = 0xFF;
 //uint8_t g_u8ADLL = 0x00;
 boolean g_bAdcInterruptFlag = false;
@@ -759,8 +759,27 @@ static int _analogDuty(int val, uint16_t frequency)
 
 /* 1011 Nhu add */
 static void _analogPinRead (uint8_t pin)
-		{
-	if (g_u8AnalogReadAvailableTable[pin] == false) {
+{
+	uint8_t pin_index;
+	if (pin==29)
+	{
+		pin_index = 8;
+	}
+	else if (pin==40)
+	{
+		pin_index = 9;
+	}
+	else if (pin<ANALOG_PIN_START_NUMBER && pin < 2)
+	{
+		pin_index = pin + 6;
+	}
+	else
+	{
+		pin_index = pin - ANALOG_PIN_START_NUMBER;
+	}
+
+
+	if (g_u8AnalogReadAvailableTable[pin_index] == false) {
 		// ピンモードをAnalogモードに変更
 		//PinTableType *p;
 		//PinTableType pin_tbl;
@@ -779,27 +798,10 @@ static void _analogPinRead (uint8_t pin)
 			*p->portModeControlARegisterAddr |= (unsigned long)(p->pmca);
 
 //			*p->portModeControlARegisterAddr &= (unsigned long)~(p->pmca);
-			g_u8AnalogReadAvailableTable[pin] = true;
+			g_u8AnalogReadAvailableTable[pin_index] = true;
 		}
 	}
-
-	if (pin==29)
-	{
-		pin = 8;
-	}
-	else if (pin==40)
-	{
-		pin = 9;
-	}
-	else if (pin<ANALOG_PIN_START_NUMBER && pin < 2)
-	{
-		pin += 6;
-	}
-	else
-	{
-		pin -= ANALOG_PIN_START_NUMBER;
-	}
-		}
+}
 
 static int _analogRead(uint8_t u8ADS) {
 	int s16Result = 0;

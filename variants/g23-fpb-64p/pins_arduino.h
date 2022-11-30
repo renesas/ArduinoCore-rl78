@@ -48,7 +48,7 @@
 #if defined(__AVR_ATmega8__)
 #define digitalPinHasPWM(p)         ((p) == 9 || (p) == 10 || (p) == 11)
 #elif defined(__RL78__)
-#define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11|| (p) == 22|| (p) == 23|| (p) == 24)
+#define digitalPinHasPWM(p)         ((p) == 5 || (p) == 6 || (p) == 10 || (p) == 32)
 #else
 #define digitalPinHasPWM(p)         ((p) == 3 || (p) == 5 || (p) == 6 || (p) == 9 || (p) == 10 || (p) == 11)
 #endif
@@ -161,6 +161,9 @@ static const uint8_t SCL1 = PIN_WIRE_SCL1;
 #define BUILTIN_LED1 16
 #define BUILTIN_LED2 15
 
+#define LED_ON  LOW
+#define LED_OFF HIGH
+
 /*
 #define PIN_A0   (51)
 #define PIN_A1   (52)
@@ -214,9 +217,13 @@ static const uint8_t A9 = PIN_A9;
 #define digitalPinToPCMSKbit(p) (((p) <= 7) ? (p) : (((p) <= 13) ? ((p) - 8) : ((p) - 14)))
 
 #ifndef __RL78__
-#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
+// #define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : NOT_AN_INTERRUPT))
 #else
-#define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : (p) == 25 ? 2 : NOT_AN_INTERRUPT))
+// 2022/10/14 modified by KAD (changed from G13 board allocation)
+// #define digitalPinToInterrupt(p)  ((p) == 2 ? 0 : ((p) == 3 ? 1 : (p) == 25 ? 2 : NOT_AN_INTERRUPT))
+//#define digitalPinToInterrupt(p)  (((p) == 26) ? 0 : (((p) == 12) ? 1 : (((p) == 11) ? 2 : (((p) == 13) ? 3 : (((p) == 6) ? 4 : NOT_AN_INTERRUPT)))))
+#define digitalPinToInterrupt(p)  (((p) == 26) ? 0 : (((p) == 12) ? 1 : (((p) == 11) ? 2 : (((p) == 13) ? 3 : (((p) == 6) ? 4 : (((p) == 7) ? 5 : (((p) == 4) ? 6 : NOT_AN_INTERRUPT)))))))
+
 #endif
 
 #ifdef __RL78__
@@ -285,7 +292,7 @@ static const uint8_t A9 = PIN_A9;
 #define DIGITAL_PIN_11		PORT_5	/* P51	*/
 #define DIGITAL_PIN_12		PORT_5	/* P50	*/
 #define DIGITAL_PIN_13		PORT_3	/* P30	*/
-#define DIGITAL_PIN_14		PORT_2	/* P20(REF)	*/
+#define DIGITAL_PIN_14		PORT_2	/* P40(REF)	*/ // P20->P40
 #define DIGITAL_PIN_15		PORT_5	/* P52	*/
 #define DIGITAL_PIN_16		PORT_5	/* P53	*/
 #define DIGITAL_PIN_17		PORT_5	/* P54	*/
@@ -352,7 +359,7 @@ static const uint8_t A9 = PIN_A9;
 #define DIGITAL_PIN_BIT_11	0x01	/* P51	*/
 #define DIGITAL_PIN_BIT_12	0x00	/* P50	*/
 #define DIGITAL_PIN_BIT_13	0x00	/* P30	*/
-#define DIGITAL_PIN_BIT_14	0x00	/* P20(REF)	*/
+#define DIGITAL_PIN_BIT_14	0x00	/* P40(REF)	*/ // P20->P40
 #define DIGITAL_PIN_BIT_15	0x02	/* P52	*/
 #define DIGITAL_PIN_BIT_16	0x03	/* P53	*/
 #define DIGITAL_PIN_BIT_17	0x04	/* P54	*/
@@ -418,7 +425,7 @@ static const uint8_t A9 = PIN_A9;
 #define DIGITAL_PIN_MASK_11		0x02	/* P51	*/
 #define DIGITAL_PIN_MASK_12		0x01	/* P50	*/
 #define DIGITAL_PIN_MASK_13		0x01	/* P30	*/
-#define DIGITAL_PIN_MASK_14		0x01	/* P20(REF)	*/
+#define DIGITAL_PIN_MASK_14		0x01	/* P40(REF)	*/  // P20->P40
 #define DIGITAL_PIN_MASK_15		0x04	/* P52	*/
 #define DIGITAL_PIN_MASK_16		0x08	/* P53	*/
 #define DIGITAL_PIN_MASK_17		0x10	/* P54	*/
@@ -1099,6 +1106,50 @@ static const uint8_t A9 = PIN_A9;
 #define SERIAL_TXD2			35 // P13
 #define SERIAL_RXD2			34 // P14
 /* Define Serial Port Number */
+
+
+/* Define Firmata library */
+#define TOTAL_ANALOG_PINS       NUM_ANALOG_INPUTS //6
+#define TOTAL_PINS              NUM_DIGITAL_PINS // 14 digital + 6 analog + 6 reserved + 10 internal used + 2 I2C + 3 SPI
+#define TOTAL_PORTS             15 //P00 - P147
+#define VERSION_BLINK_PIN       BUILTIN_LED1
+#define PIN_SERIAL0_RX          37
+#define PIN_SERIAL0_TX          36
+#define PIN_SERIAL1_RX          0
+#define PIN_SERIAL1_TX          1
+#define PIN_SERIAL2_RX          34
+#define PIN_SERIAL2_TX          35
+#if defined(UART_CHANNEL)
+#define IS_PIN_SERIAL0(p)        ((p) == PIN_SERIAL0_RX || (p) == PIN_SERIAL0_TX )
+#else
+#define IS_PIN_SERIAL0(p)        (0)
+#endif
+
+#if defined(UART1_CHANNEL)
+#define IS_PIN_SERIAL1(p)        ((p) == PIN_SERIAL1_RX || (p) == PIN_SERIAL1_TX)
+#else
+#define IS_PIN_SERIAL1(p)        (0)
+#endif
+
+#if defined(UART2_CHANNEL)
+#define IS_PIN_SERIAL2(p)        ((p) == PIN_SERIAL2_RX || (p) == PIN_SERIAL2_TX)
+#else
+#define IS_PIN_SERIAL2(p)        (0)
+#endif
+
+#define IS_PIN_DIGITAL(p)       ((p) >= 0 && (p) < NUM_DIGITAL_PINS && (!(IS_PIN_SERIAL(p))))
+#define IS_PIN_ANALOG(p)        ((p) >= 51 && (p) < 57)
+#define IS_PIN_PWM(p)           digitalPinHasPWM(p)
+#define IS_PIN_SERVO(p)         ((p) >= 0 && (p) < MAX_SERVOS)
+#define IS_PIN_I2C(p)           ((p) == 47 || (p) == 48 || (p) == 49 || (p) == 50)
+#define IS_PIN_SPI(p)           ((p) == SS || (p) == MOSI || (p) == MISO || (p) == SCK)
+#define IS_PIN_SERIAL(p)        (IS_PIN_SERIAL0(p) || IS_PIN_SERIAL1(p) || IS_PIN_SERIAL2(p))
+#define PIN_TO_DIGITAL(p)       (p)
+#define PIN_TO_ANALOG(p)        ((p) - 51)
+#define PIN_TO_PWM(p)           PIN_TO_DIGITAL(p)
+#define PIN_TO_SERVO(p)         (p)
+#define ANALOG_TO_PIN(p)        ((p) + 51)
+/* Define Firmata library */
 
 
 #ifdef ARDUINO_MAIN
